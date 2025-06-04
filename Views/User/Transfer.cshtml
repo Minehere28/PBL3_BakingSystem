@@ -1,0 +1,193 @@
+﻿@model TransferViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chuyển tiền VMD Bank</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/transfer.css" />
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Banking System</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="@Url.Action("User", "User")">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("Transfer", "Transfer")" class="active">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Chuyển tiền</span>
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("History", "History")">
+                    <i class="fas fa-history"></i>
+                    <span>Lịch sử GD</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Tài khoản</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <img src="~/img/VMDBANK.png" alt="VMD Bank" />
+        </div>
+
+        <div class="container">
+            <!-- Form chuyển tiền -->
+            <div class="form-panel">
+                <h2>Chuyển tiền trong VMDBank</h2>
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert-message">
+                        @ViewBag.Message
+                    </div>
+                }
+                <form asp-action="Transfer" method="post">
+                    <div class="form-group">
+                        <label>Từ tài khoản</label>
+                        <select disabled>
+                            <option>@Model.FromAccountId - @Model.AccountUserName - Tài khoản thanh toán</option>
+                        </select>
+                        <input type="hidden" asp-for="FromAccountId" />
+                        <input type="hidden" asp-for="AccountUserName" />
+                        <div class="form-inline">
+                            <span>Số dư khả dụng: @Model.balance.ToString("N0") VND</span>
+                            <input type="hidden" asp-for="balance" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ToAccountId">Số tài khoản người nhận</label>
+                        <input asp-for="ToAccountId" placeholder="Vui lòng nhập STK" />
+                        <span asp-validation-for="ToAccountId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Amount">Số tiền giao dịch</label>
+                        <input asp-for="Amount" placeholder="VND" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thời gian chuyển</label>
+                        <select disabled>
+                            <option>Chuyển ngay</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="description">Nội dung</label>
+                        <input asp-for="description" placeholder="Nhập nội dung chuyển khoản" value="@(Model.description ?? (Model.AccountUserName + " chuyển tiền"))" />
+                        <span asp-validation-for="description" class="text-danger"></span>
+                    </div>
+
+                    <button type="button" class="btn" id="continueBtn">Tiếp tục</button>
+                </form>
+            </div>
+
+            <!-- Thông tin người dùng -->
+            <div class="info-panel">
+                <div class="user">
+                    <div class="user-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        @Model.AccountUserName<br>
+                        <small>Loyalty</small>
+                    </div>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="circle">1</div> Điền thông tin
+                    </div>
+                    <div class="step inactive">
+                        <div class="circle">2</div> Xác nhận thông tin
+                    </div>
+                    <div class="step inactive">
+                        <div class="circle">3</div> Kết quả giao dịch
+                    </div>
+                </div>
+
+                <div class="bill">
+                    <hr>
+                    <p><strong>Hóa đơn đến hạn</strong> | Chuyển khoản</p>
+                    <img src="https://img.icons8.com/ios-filled/100/000000/waiting-room.png" alt="Relax">
+                    <p>Quý khách chưa có hóa đơn nào đến hạn. Hãy thư giãn.</p>
+                    <button>Thiết lập hóa đơn mới</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal xác nhận giao dịch -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Xác nhận giao dịch chuyển tiền</h3>
+            <p>Bạn có chắc chắn muốn thực hiện giao dịch này không?</p>
+            <div class="modal-buttons">
+                <button id="confirmBtn">Xác nhận</button>
+                <button id="cancelBtn">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+</html>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById("confirmModal");
+        const continueBtn = document.getElementById("continueBtn");
+        const confirmBtn = document.getElementById("confirmBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const form = document.querySelector("form");
+
+        continueBtn.addEventListener("click", function(event) {
+            event.preventDefault();
+            modal.style.display = "flex";
+        });
+
+        confirmBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+            form.submit();
+        });
+
+        cancelBtn.addEventListener("click", function() {
+            modal.style.display = "none";
+        });
+
+        // Đóng modal khi click bên ngoài
+        window.addEventListener("click", function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    });
+</script>

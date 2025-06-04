@@ -1,0 +1,69 @@
+﻿@model UserViewModel
+
+@{
+	ViewBag.Title = "VMD Bank – Vững tài chính, Sáng tương lai";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/user.css" />
+
+<div class="site-container">
+	<!-- Header -->
+	<header class="header">
+		<a href="#" class="logo">
+			<img src="~/img/VMDBANK.png" alt="VMD Bank" />
+		</a>
+		<ul class="header_title">
+			<li class="has-dropdown">
+				<a href="#">SẢN PHẨM</a>
+				<ul class="dropdown-menu">
+					<li><a asp-controller="User" asp-action="History">Xem lịch sử giao dịch</a></li>
+					<li><a asp-controller="User" asp-action="Transfer">Chuyển tiền</a></li>
+					<li><a href="#">Thông tin tiết kiệm</a></li>
+					<li><a href="#">Thông tin lãi suất</a></li>
+				</ul>
+			</li>
+			<li><a href="#">CÔNG CỤ</a></li>
+			<li><a href="#">LIÊN HỆ & HỖ TRỢ</a></li>
+			<li><a href="#">ƯU ĐÃI</a></li>
+			<li><a href="#">VỀ VMD</a></li>
+		</ul>
+
+		<div class="contact">
+			<span class="phone">1900 0505</span>
+			<img src="~/img/flag.png" alt="Vietnam" />
+		</div>
+
+		<div class="user-dropdown">
+			<i class="fas fa-user-circle"></i>
+			<div class="dropdown-content">
+				<a asp-controller="User" asp-action="UserInfo">Thông tin cá nhân</a>
+				<a asp-controller="Account" asp-action="LogOut">Đăng xuất</a>
+			</div>
+		</div>
+	</header>
+
+	<!-- Hero Section -->
+	<section class="hero">
+		<div class="hero-container">
+			<div class="hero-text">
+				<h2 class="animate-text">Vững tài chính</h2>
+				<h1 class="animate-text">"Sáng tương lai"</h1>
+				<p class="hero-slogan animate-text">VMD – Giải pháp tài chính thông minh, nâng tầm cuộc sống.</p>
+				<div class="account-balance animate-text">
+					Số dư của tôi: <span id="balance">@Model.Balance.ToString("N0") VND</span>
+				</div>
+
+				<div class="search-box">
+					<input type="text" placeholder="Thẻ tín dụng, vay tiêu dùng,…" />
+					<button>🔍</button>
+				</div>
+			</div>
+
+			<div class="hero-image">
+				<img src="~/img/family.png" alt="Family illustration" />
+			</div>
+		</div>
+	</section>
+</div>

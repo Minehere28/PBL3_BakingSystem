@@ -1,0 +1,57 @@
+﻿@model PBL3.Models.RegistrationViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - VMD Digibank</title>
+    <link rel="stylesheet" href="~/css/register.css" />
+</head>
+<body>
+    <div class="register-container">
+        <form asp-action="Register" method="post">
+            <h2>Đăng ký tài khoản</h2>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            
+            <label for="Hoten">Họ và Tên</label>
+            <input asp-for="Hoten" class="form-control" required />
+            @Html.ValidationMessageFor(m => m.Hoten, "", new { @class = "text-danger" })
+
+            <label for="Sdt">Username</label>
+            <input asp-for="Sdt" class="form-control" required />
+            @Html.ValidationMessageFor(m => m.Sdt, "", new { @class = "text-danger" })
+
+            <label for="Password">Password</label>
+            <input asp-for="Password" type="password" class="form-control" required />
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+
+            <label for="ConfirmPassword">Confirm your password</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" required />
+            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+
+            <label for="NS">Ngày Sinh</label>
+            <input asp-for="NS" type="date" class="form-control" required />
+            @Html.ValidationMessageFor(m => m.NS, "", new { @class = "text-danger" })
+
+            <label for="AccountType">Loại tài khoản</label>
+            <select asp-for="AccountType" class="form-control" required>
+                <option value="">-- Chọn --</option>
+                <option value="Thường">Thường</option>
+                <option value="Vay">Vay</option>
+                <option value="Tiết kiệm">Tiết kiệm</option>
+            </select>
+            @Html.ValidationMessageFor(m => m.AccountType, "", new { @class = "text-danger" })
+            <button type="submit">Đăng ký</button>
+        </form>
+        @if (ViewBag.Status != null)
+        {
+            <div class="text-success" style="margin-top: 15px;">
+                @ViewBag.Status
+            </div>
+        }
+        <a href="@Url.Action("Login", "Account")" class="back-to-login">👉 Quay lại trang đăng nhập</a>
+    </div>
+</body>
+</html>

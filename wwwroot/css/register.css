@@ -1,0 +1,76 @@
+﻿body {
+    background-color: #ffe6f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.register-container {
+    width: 400px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+    .register-container h2 {
+        text-align: center;
+        color: #4B0082;
+    }
+
+    .register-container label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    .register-container input[type="text"],
+    .register-container input[type="password"],
+    .register-container input[type="date"],
+    .register-container select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+.gender-options {
+    margin-top: 5px;
+}
+
+    .gender-options label {
+        margin-right: 20px;
+    }
+
+.register-container button {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    background-color: #6A5ACD;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.back-to-login {
+    margin-top: 25px;
+    text-align: center;
+    font-weight: bold;
+    color: #6A5ACD;
+    text-decoration: none;
+    display: block;
+}
+
+    .back-to-login:hover {
+        color: #483D8B;
+        text-decoration: none;
+    }
+
+
+    .register-container button:hover {
+        background-color: #483D8B;
+    }
+
+
+

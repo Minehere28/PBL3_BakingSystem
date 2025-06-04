@@ -1,0 +1,34 @@
+﻿@model PBL3.Models.UnlockViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section MainContent {
+    <div class="freeze-form-container">
+        <h2>Mở khóa tài khoản</h2>
+        <form asp-action="Unlock" method="post">
+            <div style="margin-bottom: 18px;">
+                <label for="AccountId">Nhập ID tài khoản:</label>
+                <input asp-for="AccountId" type="text" autocomplete="off" />
+                <span asp-validation-for="AccountId" style="color: #d32f2f; font-size: 1rem;"></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+                <button type="submit">Mở khóa</button>
+            </div>
+        </form>
+
+        @if (ViewBag.Status != null)
+        {
+            <span style="color: #388e3c; font-weight: 500;">@ViewBag.Status</span>
+        }
+
+        @if (ViewBag.Error != null)
+        {
+            <p style="color: #d32f2f; font-weight: 500; margin-top: 18px;">@ViewBag.Error</p>
+        }
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

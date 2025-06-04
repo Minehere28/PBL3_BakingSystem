@@ -1,0 +1,235 @@
+﻿body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #fff0f5;
+    padding: 20px;
+    border-right: 2px solid #ffc0cb;
+}
+
+    .sidebar h2 {
+        color: #d63384;
+        text-align: center;
+    }
+.sidebar a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar a:hover {
+    text-decoration: underline;
+}
+
+.nav {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+}
+
+    .nav li {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        background-color: #ffe0f0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+        .nav li:hover {
+            background-color: #ffc0cb;
+        }
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    background-image: url('https://plus.unsplash.com/premium_photo-1661757762481-676c2690d8ac?q=80&w=2070');
+    background-size: cover;
+    background-position: center;
+    overflow-y: auto;
+}
+
+.section {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+    .section.active {
+        display: block;
+    }
+
+h1, h2 {
+    color: #c2185b;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ffc0cb;
+    text-align: left;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ffc0cb;
+    border-radius: 6px;
+    background-color: #fffafa;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #ff69b4;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+    button:hover {
+        background-color: #e754a1;
+    }
+
+.info-group {
+    margin-bottom: 20px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #b30059;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.info-value {
+    padding: 10px;
+    background: #fff0f5;
+    border-radius: 6px;
+    border: 1px solid #ffc0cb;
+    color: #333;
+}
+
+.account-type {
+    background-color: #ffe0f0;
+    border-color: #ffb6c1;
+    color: #c2185b;
+}
+
+.show-password {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+#status {
+    margin-top: 15px;
+    font-weight: bold;
+}
+.freeze-form-container {
+    max-width: 600px; /* Thu nhỏ khối lại */
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    padding: 24px 28px; /* giảm padding */
+    font-size: 1rem; /* đồng bộ với các form khác */
+}
+
+
+.freeze-form-container h2 {
+    color: #c2185b;
+    font-size: 1.5rem; /* nhỏ hơn */
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.freeze-form-container label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000;
+}
+
+.freeze-form-container input[type="text"] {
+    width: 80%; /* thu ngắn input */
+    max-width: 400px;
+    padding: 10px 14px;
+    border: 1px solid #f8bbd0;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-top: 6px;
+}
+
+.freeze-form-container button {
+    background: #e754a1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+.transaction-history-section {
+    background: rgba(255, 255, 255, 0.92);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+    .date-filter label {
+        font-weight: 600;
+        color: #b30059;
+    }
+
+    .date-filter input[type="date"] {
+        padding: 8px 12px;
+        border: 1px solid #ffc0cb;
+        border-radius: 6px;
+        background-color: #fff0f5;
+        color: #333;
+    }
+
+    .date-filter button {
+        background-color: #ff69b4;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+.date-filter button:hover {
+    background-color: #e754a1;
+}

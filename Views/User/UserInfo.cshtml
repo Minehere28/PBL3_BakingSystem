@@ -1,0 +1,173 @@
+﻿@model PBL3.Models.ChangePasswordViewModel
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông Tin Người Dùng</title>
+    <style>
+        body {
+            font-family: 'Segoe UI',sans-serif;
+            background-image: url('https://plus.unsplash.com/premium_photo-1661757762481-676c2690d8ac?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            border: 2px solid #ffc0cb;
+        }
+
+        h2 {
+            text-align: center;
+            color: #d63384;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #b30059;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .info-value {
+            padding: 10px;
+            background: #fff0f5;
+            border-radius: 6px;
+            border: 1px solid #ffc0cb;
+            color: #333;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffc0cb;
+            border-radius: 6px;
+            background-color: #fffafa;
+        }
+
+        .btn-update {
+            background-color: #ff69b4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+            .btn-update:hover {
+                background-color: #e754a1;
+            }
+
+        .account-type {
+            background-color: #ffe0f0;
+            border-color: #ffb6c1;
+            color: #c2185b;
+        }
+
+        .show-password {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .change-password-form {
+            position: relative;
+            z-index: 10;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Thông Tin Người Dùng</h2>
+
+        <div class="info-group">
+            <label class="info-label">Họ và tên</label>
+            <div class="info-value">@ViewBag.Hoten</div>
+        </div>
+
+        <div class="info-group">
+            <label class="info-label">Username</label>
+            <div class="info-value">@ViewBag.Username</div>
+        </div>
+
+        <div class="info-group">
+            <label class="info-label">Ngày sinh</label>
+            <div class="info-value">@ViewBag.NS.ToString("dd/MM/yyyy")</div>
+        </div>
+
+        <div class="info-group">
+            <label class="info-label">Loại tài khoản</label>
+            <div class="info-value account-type">@ViewBag.AccountType</div>
+        </div>
+        <hr style="margin: 30px 0; border-color: #ffc0cb;">
+
+    <!-- Form đổi mật khẩu -->
+    <form asp-action="ChangePassword" asp-controller="User" method="post" class="change-password-form">
+        <div class="info-group">
+            <label class="info-label" for="NewPassword">Mật khẩu mới</label>
+                <input asp-for="NewPassword" id="NewPassword" class="input-field" type="password" placeholder="Nhập mật khẩu mới..." />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+        </div>
+        <div class="info-group">
+            <label class="info-label" for="ConfirmPassword">Xác nhận mật khẩu mới</label>
+                <input asp-for="ConfirmPassword" id="ConfirmPassword" class="input-field" type="password" placeholder="Nhập lại mật khẩu mới..." />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+        <div class="show-password">
+            <input type="checkbox" id="togglePassword" onchange="togglePasswordVisibility()" />
+            <label for="togglePassword">Hiện mật khẩu</label>
+        </div>
+        <button class="btn-update" type="submit">Cập nhật mật khẩu</button>
+    </form>
+
+    @if (ViewBag.Status != null)
+    {
+        <p style="color: green;">@ViewBag.Status</p>
+    }
+        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p style="color: red;">@err.ErrorMessage</p>
+        }
+    </div> <!-- Kết thúc .container -->
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            function togglePasswordVisibility() {
+                const newPass = document.getElementById("NewPassword");
+                const confirmPass = document.getElementById("ConfirmPassword");
+                const isChecked = document.getElementById("togglePassword").checked;
+                if (newPass && confirmPass) {
+                    newPass.type = isChecked ? "text" : "password";
+                    confirmPass.type = isChecked ? "text" : "password";
+                }
+            }
+        </script>
+    }
+
+</body>
+</html>

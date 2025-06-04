@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lịch sử giao dịch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/history.css" />
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <!-- Sidebar mới -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-piggy-bank"></i>
+            <span>Banking System</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="#">
+                    <i class="fas fa-history"></i>
+                    <span>Lịch sử GD</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Chuyển tiền</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Tài khoản</span>
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Nội dung chính -->
+    <div class="main-content">
+        <div class="container">
+            <header class="header">
+                <h1>Lịch sử giao dịch</h1>
+            </header>
+
+            <section class="account-info">
+                <p><strong>Số tài khoản:</strong> 0123456789</p>
+                <p><strong>Chủ tài khoản:</strong> Nguyễn Thị Sương Mai</p>
+                <p class="balance"><strong>Số dư:</strong> 12,500,000 VND</p>
+            </section>
+
+            <section class="filter-buttons">
+                <button class="active">Tất cả</button>
+                <button>Tiền vào</button>
+                <button>Tiền ra</button>
+            </section>
+
+            <section class="transaction-content">
+                <div class="month-section">
+                    <div class="transaction">
+                        <div>
+                            <p><strong>ABC chuyển tiền</strong></p>
+                            <span>03/04/2025 - 08:45</span>
+                        </div>
+                        <p class="inflow">+ 2,000,000 VND</p>
+                    </div>
+                    <div class="transaction">
+                        <div>
+                            <p><strong>Tiền lương</strong></p>
+                            <span>03/04/2025 - 08:45</span>
+                        </div>
+                        <p class="inflow">+ 12,000,000 VND</p>
+                    </div>
+                    <div class="transaction">
+                        <div>
+                            <p><strong>Chuyển tiền từ XYZ</strong></p>
+                            <span>15/03/2025 - 10:30</span>
+                        </div>
+                        <p class="inflow">+ 1,500,000 VND</p>
+                    </div>
+                    <div class="transaction">
+                        <div>
+                            <p><strong>Thanh toán hóa đơn điện</strong></p>
+                            <span>20/03/2025 - 14:00</span>
+                        </div>
+                        <p class="outflow">- 300,000 VND</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

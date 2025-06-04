@@ -1,0 +1,32 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="~/css/admin.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Admin Panel</h2>
+            <ul class="nav">
+                <li><a href="@Url.Action("Dashboard", "Admin")">🏠 Dashboard</a></li>
+                <li><a href="@Url.Action("ListSTK", "Admin")">👤Danh sách tài khoản</a></li>
+                <li><a href="@Url.Action("Unlock", "Admin")">🔓Mở khóa tài khoản</a></li>
+                <li><a href="@Url.Action("Freeze", "Admin")">❄️ Đóng băng tài khoản</a></li>
+                <li><a href="@Url.Action("History", "Admin")">📜 Lịch sử giao dịch</a></li>
+                <li><a href="@Url.Action("AdminInfo", "Admin")">🧑‍💼Thông tin admin</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            @RenderSection("MainContent", required: true)
+        </div>
+    </div>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

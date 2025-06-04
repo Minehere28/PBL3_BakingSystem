@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - VMD Digibank</title>
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <h1><span class="vmd-text">VMD</span> Digibank</h1>
+            <p class="welcome-text">Xin kính chào Quý khách !</p>
+
+            <form asp-controller="Account" asp-action="Login" method="post" class="login-form">
+                <label for="Sdt">Username</label>
+                <input type="text" id="Sdt" name="Sdt" placeholder="Enter your username" required />
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="Password" placeholder="Enter your password" required />
+
+                <button type="submit" class="login-btn">Login</button>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="text-danger">
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <p>@error.ErrorMessage</p>
+                        }
+                    </div>
+                }
+            </form>
+
+            <p class="register-text">
+                Not registered yet?
+                <!-- Link dẫn tới trang Register sử dụng ASP.NET MVC Tag Helper -->
+                <a asp-controller="Account" asp-action="Register">Create an account</a>
+                <span class="signup">SignUp</span>
+            </p>
+
+        </div>
+
+        <div class="login-right">
+            <img src="~/img/bank_login.png" alt=" " />
+        </div>
+
+        <!-- Nút SignUp sử dụng ASP.NET MVC Tag Helper -->
+        <a asp-controller="Account" asp-action="Register" class="signup-top">Sign Up</a>
+
+    </div>
+</body>
+</html>
