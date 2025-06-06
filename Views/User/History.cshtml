@@ -13,7 +13,7 @@
 <body>
     <div class="background-overlay"></div>
 
-    <!-- Sidebar mới -->
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
             <i class="fas fa-piggy-bank"></i>
@@ -53,11 +53,11 @@
         </div>
     </div>
 
-    <!-- Nội dung chính -->
+    <!-- Main content -->
     <div class="main-content">
         <div class="container">
             <header class="header">
-                <h1>Lịch sử giao dịch</h1>
+                <h1>Lịch sử giao dịch</h1> <!-- Đưa lên trên -->
             </header>
 
             <section class="account-info">
@@ -65,6 +65,21 @@
                 <p><strong>Chủ tài khoản:</strong> Nguyễn Thị Sương Mai</p>
                 <p class="balance"><strong>Số dư:</strong> 12,500,000 VND</p>
             </section>
+
+            <!-- Bố cục chọn ngày sau thông tin tài khoản -->
+            <form method="get">
+                <div class="date-filter">
+                    <div class="date-group">
+                        <label for="from-date">Từ ngày:</label>
+                        <input type="date" id="from-date" name="FromDate" />
+                    </div>
+                    <div class="date-group">
+                        <label for="to-date">Đến ngày:</label>
+                        <input type="date" id="to-date" name="ToDate" />
+                    </div>
+                    <button type="submit" class="search-button">Tìm kiếm</button>
+                </div>
+            </form>
 
             <section class="filter-buttons">
                 <button class="active">Tất cả</button>

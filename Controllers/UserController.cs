@@ -3,15 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using PBL3.Data;
 using PBL3.Entities;
 using PBL3.Models;
+using PBL3.Services;
 
 namespace PBL3.Controllers
 {
     public class UserController : Controller
     {
-        private readonly BMContext _bMContext;
-        public UserController(BMContext bmcontext)
+        private readonly IBankAccountService _bankAccountService;
+        private readonly IUserService _userService; 
+        public UserController(IBankAccountService bankAccountService, IUserService userService)
         {
-            _bMContext = bmcontext;
+            _bankAccountService = bankAccountService;
+            _userService = userService;
         }
         public IActionResult Index()
         {
@@ -31,8 +34,7 @@ namespace PBL3.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var bankAccount = _bMContext.BankAccounts
-                .Where(b => b.Sdt == loggedInUserSdt && EF.Property<string>(b, "AccountType") == "Regular").FirstOrDefault();
+            var bankAccount = _bankAccountService.GetRegularAccountBySdt(loggedInUserSdt);
 
             if (bankAccount == null)
             {
@@ -50,13 +52,18 @@ namespace PBL3.Controllers
         }
         public IActionResult UserInfo()
         {
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Customer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
             string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt))
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var user = _bMContext.Users.FirstOrDefault(u => u.Sdt == loggedInUserSdt);
+            var user = _userService.GetUserBySdt(loggedInUserSdt);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
@@ -65,26 +72,20 @@ namespace PBL3.Controllers
             ViewBag.Username = user.Sdt;
             ViewBag.NS = user.NS;
             int accountID = Convert.ToInt32(HttpContext.Session.GetString("AccountId"));
-            var account = _bMContext.BankAccounts
-                .Where(b => b.Sdt == loggedInUserSdt && b.AccountId == accountID)
-                .Select(b => new
-                {
-                    AccountType = EF.Property<string>(b, "AccountType") // Lấy giá trị cột Discriminator
-                })
-                .FirstOrDefault();//LINQ TO ENTITY  
+            //var accountType = _bankAccountService.GetAccountType(loggedInUserSdt, accountID); 
 
-            if (account == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-
-            ViewBag.AccountType = account.AccountType;
+            //ViewBag.AccountType = accountType;
 
             return View();
         }
         [HttpGet]
         public IActionResult Transfer()
         {
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Customer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
             string myaccountName = HttpContext.Session.GetString("Name");
 
             TransferViewModel model = new TransferViewModel
@@ -161,10 +162,8 @@ namespace PBL3.Controllers
         [HttpPost]
         public IActionResult ChangePassword(ChangePasswordViewModel model)
         {
-            // Kiểm tra hợp lệ dữ liệu đầu vào
             if (!ModelState.IsValid)
             {
-                // Hiển thị lỗi validation
                 return View("UserInfo", model);
             }
 
@@ -180,34 +179,21 @@ namespace PBL3.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
-
-            var user = _bMContext.Users.FirstOrDefault(u => u.Sdt == sdt);
-            if (user == null)
+            var result = _userService.ChangePassword(sdt, model.NewPassword);
+            if (!result)
             {
-                return RedirectToAction("Login", "Account");
+                ModelState.AddModelError("", "Không tìm thấy người dùng.");
+                return View("UserInfo", model);
             }
-
-            // Cập nhật mật khẩu mới (nên dùng hàm băm nếu có)
-            user.SetPassword(model.NewPassword);
-            _bMContext.SaveChanges();
-
-            // Hiển thị thông báo thành công
             ViewBag.Status = "✅ Mật khẩu đã được cập nhật thành công!";
-            // Xóa trường mật khẩu khỏi model để tránh hiển thị lại
             model.NewPassword = model.ConfirmPassword = string.Empty;
 
-            // Cập nhật lại các thông tin khác nếu cần
-            ViewBag.Hoten = user.Hoten;
-            ViewBag.Username = user.Sdt;
-            ViewBag.NS = user.NS;
-            var account = _bMContext.BankAccounts
-                .Where(b => b.Sdt == sdt)
-                .Select(b => new
-                {
-                    AccountType = EF.Property<string>(b, "AccountType") // Lấy giá trị cột Discriminator
-                })
-                .FirstOrDefault();//LINQ TO ENTITY  
-            ViewBag.AccountType = account.AccountType;
+            var user = _userService.GetUserBySdt(sdt);
+            ViewBag.Hoten = user?.Hoten;
+            ViewBag.Username = user?.Sdt;
+            ViewBag.NS = user?.NS;
+             
+            ViewBag.AccountType = _bankAccountService.GetAccountType(sdt,);
 
             return View("UserInfo", model);
         }

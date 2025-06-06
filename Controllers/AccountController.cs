@@ -3,18 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using PBL3.Data;
 using PBL3.Entities;
 using PBL3.Models;
+using PBL3.Services;
 
 namespace PBL3.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly BMContext _bMContext;
         private readonly ILogger<AccountController> _logger;
-
-        public AccountController(BMContext bmcontext, ILogger<AccountController> logger)
+        private readonly IUserService _userService;
+        private readonly IBankAccountService _bankAccountService;
+        public AccountController(ILogger<AccountController> logger, UserService userService, BankAccountService bankAccountService)
         {
-            _bMContext = bmcontext;
             _logger = logger;
+            _userService = userService;
+            _bankAccountService = bankAccountService;
         }
         public IActionResult Index()
         {
@@ -30,7 +32,7 @@ namespace PBL3.Controllers
         {
             if (ModelState.IsValid == true)
             {
-                if (_bMContext.Users.Any(u => u.Sdt == model.Sdt))
+                if (_userService.IsUserExists(model.Sdt))
                 {
                     ModelState.AddModelError("Sdt", "Số điện thoại đã tồn tại.");
                     return View(model);
@@ -40,20 +42,20 @@ namespace PBL3.Controllers
                     ModelState.AddModelError("ConfirmPassword", "Mật khẩu xác nhận không khớp.");
                     return View(model);
                 }
-                User user = new User();
-                user.Sdt = model.Sdt;
-                user.Hoten = model.Hoten;
-                user.NS = model.NS;
+                var user = new User
+                {
+                    Sdt = model.Sdt,
+                    Hoten = model.Hoten,
+                    NS = model.NS,
+                    Role = "Customer"
+                };
                 user.SetPassword(model.Password);
-                user.Role = "Customer";
                 try
                 {
                     //Thêm người dùng
-                    _bMContext.Users.Add(user);
-                    _bMContext.SaveChanges();
+                    _userService.RegisterUser(user);
                     //Thêm tài khoản ngân hàng
-                    _bMContext.BankAccounts.Add(new RegularAccount { Sdt = user.Sdt, user = user, AccountId = BankAccount.GenerateAccountId(_bMContext) });
-                    _bMContext.SaveChanges();
+                    _bankAccountService.CreateBankAccount(user);
 
                     ModelState.Clear(); 
                     ViewBag.Status = "Đăng ký thành công!.";
@@ -82,26 +84,21 @@ namespace PBL3.Controllers
             {
                 return View(model);
             }
-            User account = _bMContext.Users.FirstOrDefault(a => a.Sdt == model.Sdt);
+            var user = _userService.Authenticate(model.Sdt, model.Password);
 
-            if (account == null)
+            if (user == null)
             {
                 ModelState.AddModelError("", "Số điện thoại hoặc mật khẩu không chính xác.");
                 return View(model);
             }
 
-            BankAccount bankAccount = _bMContext.BankAccounts
-                .Include(a => a.user)
-                .FirstOrDefault(a => a.Sdt == account.Sdt);
-            HttpContext.Session.SetString("Sdt", account.Sdt);
-            HttpContext.Session.SetString("Name", account.Hoten);
-            HttpContext.Session.SetString("Role", account.Role);
-
-            
-
-            if (account.Role == "Admin")
+            RegularAccount bankAccount = _bankAccountService.GetRegularAccountBySdt(user.Sdt);
+            HttpContext.Session.SetString("Sdt", user.Sdt);
+            HttpContext.Session.SetString("Name", user.Hoten);
+            HttpContext.Session.SetString("Role", user.Role);
+            if (user.Role == "Admin")
             {
-                if(account.PasswordHash.Trim() == model.Password.Trim())
+                if(user.PasswordHash.Trim() == model.Password.Trim())
                 {
                     return RedirectToAction("Dashboard", "Admin");
                 }
@@ -111,9 +108,9 @@ namespace PBL3.Controllers
                     return View(model);
                 }
             }
-            else if (account.Role == "Customer")
+            else if (user.Role == "Customer")
             {
-                if (account.VerifyPassword(model.Password) == true)
+                if (user.VerifyPassword(model.Password) == true)
                 {
                     if (bankAccount.IsFrozen == true)
                     {
