@@ -20,8 +20,8 @@ namespace PBL3.Models
 
         [DataType(DataType.DateTime)]
         public DateTime NS { get; set; }
-        [Required(ErrorMessage = "This field is requierd")]
-        public string AccountType { get; set; } // Loại tài khoản (Vay, Tiet kiem, thong thuong)
+        //[Required(ErrorMessage = "This field is requierd")]
+        //public string AccountType { get; set; } // Loại tài khoản (Vay, Tiet kiem, thong thuong)
 
 
     }

@@ -35,14 +35,14 @@
             <input asp-for="NS" type="date" class="form-control" required />
             @Html.ValidationMessageFor(m => m.NS, "", new { @class = "text-danger" })
 
-            <label for="AccountType">Loại tài khoản</label>
-            <select asp-for="AccountType" class="form-control" required>
-                <option value="">-- Chọn --</option>
-                <option value="Thường">Thường</option>
-                <option value="Vay">Vay</option>
-                <option value="Tiết kiệm">Tiết kiệm</option>
-            </select>
-            @Html.ValidationMessageFor(m => m.AccountType, "", new { @class = "text-danger" })
+            @* <label for="AccountType">Loại tài khoản</label> *@
+            @* <select asp-for="AccountType" class="form-control" required> *@
+            @*     <option value="">-- Chọn --</option> *@
+            @*     <option value="Thường">Thường</option> *@
+            @*     <option value="Vay">Vay</option> *@
+            @*     <option value="Tiết kiệm">Tiết kiệm</option> *@
+            @* </select> *@
+            @* @Html.ValidationMessageFor(m => m.AccountType, "", new { @class = "text-danger" }) *@
             <button type="submit">Đăng ký</button>
         </form>
         @if (ViewBag.Status != null)
