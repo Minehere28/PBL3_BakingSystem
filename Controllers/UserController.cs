@@ -71,7 +71,6 @@ namespace PBL3.Controllers
             ViewBag.Hoten = user.Hoten;
             ViewBag.Username = user.Sdt;
             ViewBag.NS = user.NS;
-            int accountID = Convert.ToInt32(HttpContext.Session.GetString("AccountId"));
             //var accountType = _bankAccountService.GetAccountType(loggedInUserSdt, accountID); 
 
             //ViewBag.AccountType = accountType;
@@ -99,64 +98,24 @@ namespace PBL3.Controllers
         [HttpPost]
         public IActionResult Transfer(TransferViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var toAccount = _bMContext.BankAccounts.FirstOrDefault(b => b.AccountId == model.ToAccountId);
-                var fromAccount = _bMContext.BankAccounts.FirstOrDefault(b => b.AccountId == model.FromAccountId);
-                if (toAccount == null)
-                {
-                    ModelState.AddModelError("ToAccountId", "Tài khoản người nhận không tồn tại.");
-                    return View(model);
-                }
-                if(fromAccount == null)
-                {
-                    ModelState.AddModelError("FromAccountId", "Tài khoản người gửi không tồn tại.");
-                    return View(model);
-                }
-                double Amount = model.Amount;
-                if (Amount <= 0)
-                {
-                    ModelState.AddModelError("Amount", "Số tiền phải lớn hơn 0.");
-                    return View(model);
-                }
-                if (Amount > fromAccount.Balance)
-                {
-                    ModelState.AddModelError("Amount", "Số tiền chuyển lớn hơn số dư tài khoản.");
-                    return View(model);
-                }
-                try
-                {
-                    fromAccount.Balance -= model.Amount;
-                    toAccount.Balance += model.Amount;
-
-                    Trans trans1 = new Trans(fromAccount.AccountId, toAccount.AccountId,fromAccount,toAccount, model.Amount, TransactionType.Transfer,model.description);
-                    _bMContext.Transactions.Add(trans1);
-                    _bMContext.SaveChanges();
-
-                    // Reset ModelState và tạo model mới để tránh submit lại
-                    ModelState.Clear();
-                    TransferViewModel newModel = new TransferViewModel
-                    {
-                        FromAccountId = model.FromAccountId,
-                        AccountUserName = model.AccountUserName,
-                        balance = fromAccount.Balance
-                    };
-                    ViewBag.Message = "Chuyển tiền thành công.";
-                    return View(newModel);
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    // Lấy thông tin lỗi chi tiết nhất
-                    var inner = dbEx.InnerException?.Message ?? dbEx.Message;
-                    ModelState.AddModelError("", "Có lỗi xảy ra khi chuyển tiền: " + inner);
-                    return View(model);
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Có lỗi xảy ra khi chuyển tiền: " + ex.Message);
-                    return View(model);
-                }
+                return View(model);
             }
+            var (success, message) = _bankAccountService.Transfer(model);
+            if (success)
+            {
+                ModelState.Clear();
+                var newModel = new TransferViewModel
+                {
+                    FromAccountId = model.FromAccountId,
+                    AccountUserName = model.AccountUserName,
+                    balance = _bankAccountService.GetBalance(model.FromAccountId)
+                };
+                ViewBag.Message = message;
+                return View(model);
+            }
+            ModelState.AddModelError("", message);
             return View(model);
         }
         [HttpPost]
@@ -192,8 +151,6 @@ namespace PBL3.Controllers
             ViewBag.Hoten = user?.Hoten;
             ViewBag.Username = user?.Sdt;
             ViewBag.NS = user?.NS;
-             
-            ViewBag.AccountType = _bankAccountService.GetAccountType(sdt,);
 
             return View("UserInfo", model);
         }

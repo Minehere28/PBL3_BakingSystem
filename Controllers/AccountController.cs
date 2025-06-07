@@ -12,7 +12,7 @@ namespace PBL3.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly IUserService _userService;
         private readonly IBankAccountService _bankAccountService;
-        public AccountController(ILogger<AccountController> logger, UserService userService, BankAccountService bankAccountService)
+        public AccountController(ILogger<AccountController> logger, IUserService userService, IBankAccountService bankAccountService)
         {
             _logger = logger;
             _userService = userService;

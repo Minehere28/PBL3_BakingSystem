@@ -8,6 +8,6 @@ namespace PBL3.Repositories
         public bool IsUserExists(string sdt);
         void Add(User user);
         void Update(User user);
-        Task<List<User>> GetAllAsync();
+        List<User> GetAllUser();
     }
 }

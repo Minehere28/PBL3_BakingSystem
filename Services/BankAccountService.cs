@@ -19,44 +19,83 @@ namespace PBL3.Services
 
             _bankAccountRepo.AddRegular(user);
         }
+        public (bool Success, string Message) Transfer(TransferViewModel model)
+        {
+            RegularAccount fromAccount = GetRegularAccountByID(model.FromAccountId);
+            RegularAccount toAccount = GetRegularAccountByID(model.ToAccountId);
+
+            if (fromAccount == null)
+                return (false, "Tài khoản người gửi không tồn tại.");
+
+            if (toAccount == null)
+                return (false, "Tài khoản người nhận không tồn tại.");
+
+            if (model.Amount <= 0)
+                return (false, "Số tiền phải lớn hơn 0.");
+
+            if (model.Amount > fromAccount.Balance)
+                return (false, "Số tiền chuyển lớn hơn số dư tài khoản.");
+
+            try
+            {
+                fromAccount.Transfer(model.Amount, toAccount);
+
+                var transaction = new Trans(
+                    fromAccount.AccountId,
+                    toAccount.AccountId,
+                    fromAccount,
+                    toAccount,
+                    model.Amount,
+                    TransactionType.Transfer,
+                    model.description
+                );
+
+                _bankAccountRepo.Update(fromAccount);
+                _bankAccountRepo.Update(toAccount);
+                _bankAccountRepo.AddTrans(transaction);
+
+                return (true, "Chuyển tiền thành công.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "Lỗi chuyển tiền: " + ex.Message);
+            }
+        }
+
+        public double GetBalance(int accountId)
+        {
+            var account = _bankAccountRepo.GetByID(accountId);
+            return account?.Balance ?? 0;
+        }
+
         public RegularAccount? GetRegularAccountBySdt(string sdt)
         {
             return _bankAccountRepo.GetRegularAccountBySdt(sdt);
         }
-        public string? GetAccountType(string sdt, int accountId)
+
+        public LoanAccount? GetLoanAccountBySdt(string sdt)
         {
-            return _bankAccountRepo.GetAccountType(sdt, accountId);
+            return _bankAccountRepo.GetLoanAccountBySdt(sdt);
         }
 
-        public (bool Success, string Message, double NewBalance) Transfer(TransferViewModel model)
+        public SavingAccount? GetSavingAccountBySdt(string sdt)
         {
-            var fromAccount = _bankAccountRepo.GetBankAccountByID(model.FromAccountId);
-            var toAccount = _bankAccountRepo.GetBankAccountByID(model.ToAccountId);
+            return _bankAccountRepo.GetSavingsAccountBySdt(sdt);
+        }
 
-            if(toAccount == null)
-            return (false, "Tài khoản người nhận không tồn tại.", 0);
+        public RegularAccount? GetRegularAccountByID(int id)
+        {
+            return _bankAccountRepo.GetRegularAccountByID(id);
+        }
 
-            if (fromAccount == null)
-                return (false, "Tài khoản người gửi không tồn tại.", 0);
+        public LoanAccount? GetLoanAccountByID(int id)
+        {
+            return _bankAccountRepo.GetLoanAccountByID(id);
+        }
 
-            if (model.Amount <= 0)
-                return (false, "Số tiền phải lớn hơn 0.", fromAccount.Balance);
-
-            if (model.Amount > fromAccount.Balance)
-                return (false, "Số tiền chuyển lớn hơn số dư tài khoản.", fromAccount.Balance);
-            try
-            {
-
-            }
-            catch (DbUpdateException dbEx)
-            {
-                var inner = dbEx.InnerException?.Message ?? dbEx.Message;
-                return (false, "Có lỗi xảy ra khi chuyển tiền: " + inner, fromAccount?.Balance ?? 0);
-            }
-            catch (Exception ex)
-            {
-                return (false, "Có lỗi xảy ra khi chuyển tiền: " + ex.Message, fromAccount?.Balance ?? 0);
-            }
+        public SavingAccount? GetSavingAccountByID(int id)
+        {
+            return _bankAccountRepo.GetSavingsAccountByID(id);
         }
     }
  }

@@ -27,9 +27,9 @@ namespace PBL3.Repositories
             _context.Users.Update(user);
             _context.SaveChanges();
         }
-        public async Task<List<User>> GetAllAsync()
+        public List<User> GetAllUser()
         {
-            return await _context.Users.ToListAsync();
+            return _context.Users.ToList();
         }
 
         public bool IsUserExists(string sdt)

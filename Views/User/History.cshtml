@@ -21,32 +21,32 @@
         </div>
         <ul class="sidebar-menu">
             <li>
-                <a href="#">
+                <a href="@Url.Action("User", "User")">
                     <i class="fas fa-home"></i>
                     <span>Trang chủ</span>
                 </a>
             </li>
             <li class="active">
-                <a href="#">
+                <a href="@Url.Action("History", "User")">
                     <i class="fas fa-history"></i>
                     <span>Lịch sử GD</span>
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="@Url.Action("Transfer", "User")" class="active">
                     <i class="fas fa-exchange-alt"></i>
                     <span>Chuyển tiền</span>
                 </a>
             </li>
             <li>
-                <a href="#">
+                <a href="@Url.Action("UserInfo", "User")">
                     <i class="fas fa-user-circle"></i>
                     <span>Tài khoản</span>
                 </a>
             </li>
         </ul>
         <div class="sidebar-footer">
-            <a href="#">
+            <a href="@Url.Action("LogOut","Account")">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Đăng xuất</span>
             </a>

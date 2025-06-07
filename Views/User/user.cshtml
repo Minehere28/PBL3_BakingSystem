@@ -52,7 +52,9 @@
 				<h1 class="animate-text">"Sáng tương lai"</h1>
 				<p class="hero-slogan animate-text">VMD – Giải pháp tài chính thông minh, nâng tầm cuộc sống.</p>
 				<div class="account-balance animate-text">
-					Số dư của tôi: <span id="balance">@Model.Balance.ToString("N0") VND</span>
+					Số tài khoản: <span id="balance">@Model.AccountId.ToString()</span>
+					<br/>
+					Số dư: <span id="balance">@Model.Balance.ToString("N0") VND</span>
 				</div>
 
 				<div class="search-box">
