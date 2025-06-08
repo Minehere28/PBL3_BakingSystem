@@ -41,3 +41,100 @@
     </div>
 }
 
+@{
+    var daLoc = Request.Query["fromDate"].Count > 0 || Request.Query["toDate"].Count > 0;
+}
+
+@if (daLoc && (Model.Transactions == null || !Model.Transactions.Any()))
+{
+    <div id="popup-no-data" class="popup">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">×</button>
+            <p>😕 Không tìm thấy giao dịch nào trong khoảng thời gian này.</p>
+        </div>
+    </div>
+
+    <script>
+        function closePopup() {
+            document.getElementById("popup-no-data").style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById("popup-no-data").style.display = "none";
+            }, 300);
+        }
+
+        window.onload = function () {
+            const popup = document.getElementById("popup-no-data");
+            popup.style.display = "flex";
+            setTimeout(() => {
+                popup.style.opacity = 1;
+            }, 50);
+        }
+    </script>
+
+    <style>
+        .popup {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .popup-content {
+            position: relative;
+            background-color: #fff;
+            color: #d63384;
+            padding: 30px 40px;
+            border-radius: 16px;
+            width: 420px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+            .popup-content p {
+                font-size: 18px;
+                margin-top: 20px;
+            }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+            .close-btn:hover {
+                color: #d63384;
+                transform: scale(1.2);
+            }
+
+        @@keyframes fadeInUp {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }</style>
+}
+

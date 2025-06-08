@@ -14,20 +14,36 @@
     background-color: #fff0f5;
     padding: 20px;
     border-right: 2px solid #ffc0cb;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', sans-serif;
 }
 
     .sidebar h2 {
         color: #d63384;
         text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
     }
-.sidebar a {
-    text-decoration: none;
-    color: inherit;
-}
 
-.sidebar a:hover {
-    text-decoration: underline;
-}
+    .sidebar a {
+        display: block;
+        text-decoration: none;
+        color: #333;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+
+        .sidebar a:hover {
+            background-color: #ffe6f0;
+            color: #d63384;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(214, 51, 132, 0.1);
+            text-decoration: none;
+        }
+
 
 .nav {
     list-style: none;
