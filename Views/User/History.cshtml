@@ -1,6 +1,9 @@
 ﻿@{
     Layout = null;
 }
+@{
+    bool showTransactions = ViewBag.HasFiltered ?? false;
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -67,7 +70,7 @@
             </section>
 
             <!-- Bố cục chọn ngày sau thông tin tài khoản -->
-            <form method="get">
+            <form method="get" action="@Url.Action("History", "User")">
                 <div class="date-filter">
                     <div class="date-group">
                         <label for="from-date">Từ ngày:</label>
@@ -81,49 +84,38 @@
                 </div>
             </form>
 
-            <section class="filter-buttons">
-                <button class="active">Tất cả</button>
-                <button>Tiền vào</button>
-                <button>Tiền ra</button>
-            </section>
+            @if (showTransactions)
+            {
+                <section class="filter-buttons">
+                    <button class="active">Tất cả</button>
+                    <button>Tiền vào</button>
+                    <button>Tiền ra</button>
+                </section>
 
-            <section class="transaction-content">
-                <div class="month-section">
-                    @foreach(var trans in Model)
-                    {
-                        <div class="transaction">
-                            <div>
-                                <p><strong>@trans.Description</strong></p>
-                                <p><strong> Từ: 6789-Nguyễn Thị Sương Mai</strong></p>
-                                <span>03/04/2025 - 08:45</span>
-                            </div>
-                            <p class="inflow">+ 2,000,000 VND</p>
-                        </div>
-                    }
-                    
-                    <div class="transaction">
-                        <div>
-                            <p><strong>Tiền lương</strong></p>
-                            <span>03/04/2025 - 08:45</span>
-                        </div>
-                        <p class="inflow">+ 12,000,000 VND</p>
+                <section class="transaction-content">
+                    <div class="month-section">
+                        @if (!Model.Any())
+                        {
+                            <p>Không có giao dịch nào trong khoảng thời gian này.</p>
+                        }
+                        else
+                        {
+                            @foreach (var trans in Model)
+                            {
+                                <div class="transaction">
+                                    <div>
+                                        <p><strong>@trans.Description</strong></p>
+                                        <span>@trans.Date.ToString("dd/MM/yyyy - HH:mm")</span>
+                                    </div>
+                                    <p class="@(trans.Amount > 0 ? "inflow" : "outflow")">
+                                        @(trans.Amount > 0 ? "+" : "-") @Math.Abs(trans.Amount).ToString("N0") VND
+                                    </p>
+                                </div>
+                            }
+                        }
                     </div>
-                    <div class="transaction">
-                        <div>
-                            <p><strong>Chuyển tiền từ XYZ</strong></p>
-                            <span>15/03/2025 - 10:30</span>
-                        </div>
-                        <p class="inflow">+ 1,500,000 VND</p>
-                    </div>
-                    <div class="transaction">
-                        <div>
-                            <p><strong>Thanh toán hóa đơn điện</strong></p>
-                            <span>20/03/2025 - 14:00</span>
-                        </div>
-                        <p class="outflow">- 300,000 VND</p>
-                    </div>
-                </div>
-            </section>
+                </section>
+            }
         </div>
     </div>
 </body>
