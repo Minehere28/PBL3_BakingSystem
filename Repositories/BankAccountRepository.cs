@@ -115,5 +115,34 @@ namespace PBL3.Repositories
         {
             return _context.BankAccounts.ToList();
         }
+
+        public bool FreezeAccount(int accountID)
+        {
+            var account = GetByID(accountID);
+            if (account == null) return false;
+            if (!account.IsActive()) return false;
+            account.Freeze();
+            Update(account);
+            return true;
+        }
+
+        public bool UnlockAccount(int accountID)
+        {
+            var account = GetByID(accountID);
+            if (account == null) return false;
+            if (account.IsActive()) return false;
+            account.UnFreeze();
+            Update(account);
+            return true;
+        }
+
+        public List<Trans> GetTransactionByDateRange(DateTime from, DateTime to)
+        {
+            return _context.Transactions
+                .Include(t => t.FromAccount).ThenInclude(a => a.user)
+                .Where(t=>t.TransactionDate >= from && t.TransactionDate <= to)
+                .OrderByDescending(t => t.TransactionDate)
+                .ToList();
+        }
     }
 }

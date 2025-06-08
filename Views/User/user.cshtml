@@ -20,8 +20,8 @@
 				<ul class="dropdown-menu">
 					<li><a asp-controller="User" asp-action="History">Xem lịch sử giao dịch</a></li>
 					<li><a asp-controller="User" asp-action="Transfer">Chuyển tiền</a></li>
-					<li><a href="#">Thông tin tiết kiệm</a></li>
-					<li><a href="#">Thông tin lãi suất</a></li>
+					<li><a href="@Url.Action("Saving","User")">Thông tin tiết kiệm</a></li>
+					<li><a href="@Url.Action("Loan","User")">Thông tin lãi suất</a></li>
 				</ul>
 			</li>
 			<li><a href="#">CÔNG CỤ</a></li>

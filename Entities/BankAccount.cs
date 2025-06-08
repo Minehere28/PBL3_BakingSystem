@@ -48,7 +48,14 @@ public abstract class BankAccount
     }
 
     // ==== Methods ====
-
+    public bool IsActive()
+    {
+        return !IsFrozen;
+    }
+    public bool CanTransact()
+    {
+        return !IsFrozen && !IsFlagged;
+    }
     public void Freeze() => IsFrozen = true;
     public void UnFreeze() => IsFrozen = false;
 

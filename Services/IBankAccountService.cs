@@ -16,5 +16,10 @@ namespace PBL3.Services
         
         (bool Success, string Message) Transfer(TransferViewModel model);
         double GetBalance(int accountId);
+        bool IsAccountActive(string sdt);
+        bool FreezeAccount(int accountId);
+        BankAccount? GetByID(int id);
+        bool UnlockAccount(int accountId);
+        List<Trans> GetTransactionByDateRange(DateTime from, DateTime to);
     }
 }

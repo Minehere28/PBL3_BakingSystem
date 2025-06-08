@@ -3,32 +3,30 @@ using Microsoft.EntityFrameworkCore;
 using PBL3.Data;
 using PBL3.Entities;
 using PBL3.Models;
+using PBL3.Services;
 
 namespace PBL3.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly BMContext _bMContext;
-
-        public AdminController(BMContext bmcontext)
+        private readonly IBankAccountService _bankAccountService;
+        private readonly IUserService _userService;
+        public AdminController(IBankAccountService bankAccountService, IUserService userService)
         {
-            _bMContext = bmcontext;
-        }
-        public IActionResult Index()
-        {
-            return View();
+            _bankAccountService = bankAccountService;
+            _userService = userService;
         }
         [HttpGet]
         public IActionResult Dashboard()
         {
             // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
             // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
@@ -38,43 +36,71 @@ namespace PBL3.Controllers
         [HttpGet]
         public IActionResult AdminInfo()
         {
-            // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
-            // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
             }
-            //var user = _bMContext.Users.FirstOrDefault(u => u.Sdt == loggedInUserSdt);
-            User user = _bMContext.Users.FirstOrDefault(u => u.Sdt == loggedInUserSdt);
+            User user = _userService.GetUserBySdt(loggedInUserSdt);
             if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
-            AdminInfoViewModel model = new AdminInfoViewModel
-            {
-                HoTen = user.Hoten,
-                Username = user.Sdt,
-                NgaySinh = user.NS,
-            };
+            ViewBag.HoTen = user.Hoten;
+            ViewBag.Username = user.Sdt;
+            ViewBag.NgaySinh = user.NS;
 
-            return View(model);
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("UserInfo", model);
+            }
+
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("", "Mật khẩu xác nhận không khớp.");
+                return View("UserInfo", model);
+            }
+            string sdt = HttpContext.Session.GetString("Sdt");
+            if (string.IsNullOrEmpty(sdt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            bool result = _userService.ChangePassword(sdt, model.NewPassword);
+            if (!result)
+            {
+                ModelState.AddModelError("", "Không tìm thấy người dùng.");
+                return View("AdminInfo", model);
+            }
+            ViewBag.Status = "✅ Mật khẩu đã được cập nhật thành công!";
+            model.NewPassword = model.ConfirmPassword = string.Empty;
+
+            User user = _userService.GetUserBySdt(sdt);
+            ViewBag.Hoten = user?.Hoten;
+            ViewBag.Username = user?.Sdt;
+            ViewBag.NS = user?.NS;
+
+            return View("AdminInfo", model);
         }
         public IActionResult Freeze()
         {
             // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
             // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
@@ -89,22 +115,29 @@ namespace PBL3.Controllers
                 return View(model);
             }
 
-            var account = _bMContext.BankAccounts.FirstOrDefault(a => a.AccountId == model.AccountId);
+            var account = _bankAccountService.GetByID(model.AccountId);
             if (account == null)
             {
                 ViewBag.Error = "Không tìm thấy tài khoản.";
                 return View(model);
             }
-            if (account.IsFrozen)
+            if (!account.IsActive())
             {
                 ViewBag.Error = "Tài khoản đã bị đóng băng trước đó.";
                 return View(model);
             }
             try
             {
-                account.IsFrozen = true;
-                _bMContext.SaveChanges();
-                ViewBag.Status = "Đã đóng băng tài khoản thành công!";
+                bool result = _bankAccountService.FreezeAccount(model.AccountId);
+                if (!result)
+                {
+                    ViewBag.Error = "Không thể đóng băng tài khoản. Vui lòng thử lại sau.";
+                    return View(model);
+                }
+                else
+                {
+                    ViewBag.Status = "Đã đóng băng tài khoản thành công!";
+                }  
             }
             catch (Exception ex)
             {
@@ -115,26 +148,23 @@ namespace PBL3.Controllers
         [HttpGet]
         public IActionResult History(DateTime? fromDate, DateTime? toDate)
         {
-            // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
-            // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
             }
+
             DateTime to = toDate ?? DateTime.Now;
-            DateTime from = fromDate ?? to.AddDays(-30); 
-            //Tìm kiếm các giao dịch trong khoảng thời gian từ 'from' đến 'to'
-            var transactions = _bMContext.Transactions.Include(t=>t.FromAccount).ThenInclude(a=>a.user)
-                .Where(t => t.TransactionDate >= from && t.TransactionDate <= to)
-                .OrderByDescending(t => t.TransactionDate)
-                .ToList();
-            // Nếu không có giao dịch nào, trả về thông báo
+            DateTime from = fromDate ?? to.AddDays(-30);
+
+            var transactions = _bankAccountService.GetTransactionByDateRange(from, to);
+            
             if (transactions.Count == 0)
             {
                 ViewBag.Message = "Không có giao dịch nào trong khoảng thời gian này.";
@@ -147,16 +177,16 @@ namespace PBL3.Controllers
             };
             return View(model);
         }
+        [HttpGet]
         public IActionResult ListSTK()
         {
-            // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
-            // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
@@ -166,13 +196,13 @@ namespace PBL3.Controllers
         public IActionResult Unlock()
         {
             // Kiểm tra quyền Admin
-            String role = HttpContext.Session.GetString("Role");
+            string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
                 return RedirectToAction("AccessDenied", "Account");
             }
             // Lấy thông tin Admin từ session
-            String loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(loggedInUserSdt) == true)
             {
                 return RedirectToAction("Login", "Account");
@@ -186,22 +216,28 @@ namespace PBL3.Controllers
             {
                 return View(model);
             }
-            var account = _bMContext.BankAccounts.FirstOrDefault(a => a.AccountId == model.AccountId);
+            var account = _bankAccountService.GetByID(model.AccountId);
             if (account == null)
             {
                 ViewBag.Error = "Không tìm thấy tài khoản.";
                 return View(model);
             }
-            if (!account.IsFrozen)
+            if (account.IsActive())
             {
                 ViewBag.Error = "Tài khoản không bị đóng băng.";
                 return View(model);
             }
             try
             {
-                account.IsFrozen = false;
-                _bMContext.SaveChanges();
-                ViewBag.Status = "Đã mở khóa tài khoản thành công!";
+                bool result = _bankAccountService.UnlockAccount(model.AccountId);
+                if (result)
+                {
+                    ViewBag.Status = "Đã mở khóa tài khoản thành công!";
+                }
+                else
+                {
+                    ViewBag.Error = "Không thể mở khóa tài khoản. Vui lòng thử lại sau.";
+                }
             }
             catch (Exception ex)
             {

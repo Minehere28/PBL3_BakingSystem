@@ -97,6 +97,31 @@ namespace PBL3.Services
         {
             return _bankAccountRepo.GetSavingsAccountByID(id);
         }
+
+        public bool IsAccountActive(string sdt)
+        {
+            RegularAccount acc = GetRegularAccountBySdt(sdt);
+            return acc != null && acc.IsActive();
+        }
+
+        public bool FreezeAccount(int accountId)
+        {
+            return _bankAccountRepo.FreezeAccount(accountId);
+        }
+
+        public BankAccount? GetByID(int id)
+        {
+            return _bankAccountRepo.GetByID(id);
+        }
+        public bool UnlockAccount(int accountId)
+        {
+            return _bankAccountRepo.UnlockAccount(accountId);
+        }
+
+        public List<Trans> GetTransactionByDateRange(DateTime from, DateTime to)
+        {
+            return _bankAccountRepo.GetTransactionByDateRange(from, to);
+        }
     }
  }
 

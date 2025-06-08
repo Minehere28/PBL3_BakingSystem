@@ -92,7 +92,7 @@ namespace PBL3.Controllers
                 return View(model);
             }
 
-            RegularAccount bankAccount = _bankAccountService.GetRegularAccountBySdt(user.Sdt);
+            //RegularAccount bankAccount = _bankAccountService.GetRegularAccountBySdt(user.Sdt);
             HttpContext.Session.SetString("Sdt", user.Sdt);
             HttpContext.Session.SetString("Name", user.Hoten);
             HttpContext.Session.SetString("Role", user.Role);
@@ -112,7 +112,7 @@ namespace PBL3.Controllers
             {
                 if (user.VerifyPassword(model.Password) == true)
                 {
-                    if (bankAccount.IsFrozen == true)
+                    if (!_bankAccountService.IsAccountActive(user.Sdt))//Cần đóng gói lại
                     {
                         ModelState.AddModelError("", "Tài khoản của bạn đã bị đóng băng. Vui lòng liên hệ với quản trị viên để biết thêm chi tiết.");
                         return View(model);

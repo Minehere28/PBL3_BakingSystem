@@ -50,6 +50,7 @@ namespace PBL3.Controllers
             };
             return View(model);
         }
+        [HttpGet]
         public IActionResult UserInfo()
         {
             string role = HttpContext.Session.GetString("Role");
@@ -131,14 +132,12 @@ namespace PBL3.Controllers
                 ModelState.AddModelError("", "Mật khẩu xác nhận không khớp.");
                 return View("UserInfo", model);
             }
-
-            // Lấy thông tin user hiện tại từ session
-            var sdt = HttpContext.Session.GetString("Sdt");
+            string sdt = HttpContext.Session.GetString("Sdt");
             if (string.IsNullOrEmpty(sdt))
             {
                 return RedirectToAction("Login", "Account");
             }
-            var result = _userService.ChangePassword(sdt, model.NewPassword);
+            bool result = _userService.ChangePassword(sdt, model.NewPassword);
             if (!result)
             {
                 ModelState.AddModelError("", "Không tìm thấy người dùng.");
@@ -147,7 +146,7 @@ namespace PBL3.Controllers
             ViewBag.Status = "✅ Mật khẩu đã được cập nhật thành công!";
             model.NewPassword = model.ConfirmPassword = string.Empty;
 
-            var user = _userService.GetUserBySdt(sdt);
+            User user = _userService.GetUserBySdt(sdt);
             ViewBag.Hoten = user?.Hoten;
             ViewBag.Username = user?.Sdt;
             ViewBag.NS = user?.NS;
@@ -169,5 +168,37 @@ namespace PBL3.Controllers
             }
             return View();
         }
+        [HttpGet]
+        public IActionResult Saving()
+        {
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Customer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            string sdt = HttpContext.Session.GetString("Sdt");
+            if (string.IsNullOrEmpty(sdt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View();
+        }
+        [HttpGet]
+        public IActionResult Loan()
+        {
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Customer")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            string sdt = HttpContext.Session.GetString("Sdt");
+            if (string.IsNullOrEmpty(sdt))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View();
+        }
+
+
     }
 }
