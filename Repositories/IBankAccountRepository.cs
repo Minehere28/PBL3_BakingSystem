@@ -23,5 +23,6 @@ namespace PBL3.Repositories
         void AddTrans(Trans trans);
         List<BankAccount> GetAllBankAccounts();
         List<Trans>GetTransactionByDateRange(DateTime from, DateTime to);
+        
     }
 }
