@@ -7,11 +7,14 @@
     <div class="admin-history-container">
         <div class="admin-history-box">
             <h2 class="admin-history-title">Lịch sử giao dịch</h2>
+            <div class=" date-filter">
             <form method="get" style="margin-bottom: 18px;">
                 <label>Từ ngày: <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" /></label>
                 <label>Đến ngày: <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" /></label>
                 <button type="submit" class="filter-btn">Lọc</button>
             </form>
+            </div>
+
             <table class="admin-history-table">
                 <thead>
                     <tr>

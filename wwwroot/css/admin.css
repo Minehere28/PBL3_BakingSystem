@@ -214,7 +214,59 @@ button {
     max-width: 1000px;
     margin: 0 auto;
 }
+.admin-history-container {
+    background: rgba(255, 255, 255, 0.7); /* Lớp overlay mờ */
+    padding: 20px;
+    border-radius: 16px;
+}
 
+.admin-history-box {
+    background: white; /* Nền trắng đục cho toàn bộ khung */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.admin-history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white; /* Đảm bảo bảng không trong suốt */
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .admin-history-table th {
+        background: #ffe6f2; /* Màu hồng pastel cho header */
+        color: #c2185b;
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    .admin-history-table td {
+        padding: 10px 15px;
+        border-bottom: 1px solid #ffebee;
+        background: white; /* Ô dữ liệu màu trắng */
+    }
+
+    .admin-history-table tr:hover td {
+        background: #fff5f7; /* Hiệu ứng hover */
+    }
+
+.filter-btn {
+    background: #ff69b4;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+    .filter-btn:hover {
+        background: #e754a1;
+        transform: translateY(-2px);
+    }
 .date-filter {
     display: flex;
     align-items: center;
@@ -225,7 +277,8 @@ button {
 
     .date-filter label {
         font-weight: 600;
-        color: #b30059;
+        color: #8b0055;
+        margin-right: 8px;
     }
 
     .date-filter input[type="date"] {
@@ -234,18 +287,28 @@ button {
         border-radius: 6px;
         background-color: #fff0f5;
         color: #333;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
+
+        .date-filter input[type="date"]:focus {
+            outline: none;
+            border-color: #d63384;
+            box-shadow: 0 0 5px #d63384;
+            background-color: #fff;
+        }
 
     .date-filter button {
         background-color: #ff69b4;
         color: white;
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
         border-radius: 8px;
         cursor: pointer;
-        transition: background 0.3s ease;
+        box-shadow: 0 4px 8px rgba(214, 51, 132, 0.2);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-.date-filter button:hover {
-    background-color: #e754a1;
-}
+        .date-filter button:hover {
+            background-color: #e754a1;
+            box-shadow: 0 6px 12px rgba(231, 84, 161, 0.4);
+        }
