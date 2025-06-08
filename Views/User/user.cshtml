@@ -1,12 +1,16 @@
-﻿@model UserViewModel
-
-@{
-	ViewBag.Title = "VMD Bank – Vững tài chính, Sáng tương lai";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+    Layout = null;
 }
-
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VMD Bank - Vững tài chính, Sáng tương lai</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="~/css/user.css" />
+</head>
+<body>
 
 <div class="site-container">
 	<!-- Header -->
@@ -125,10 +129,10 @@
     <div class="container">
         <h2>ĐỐI TÁC DOANH NGHIỆP</h2>
         <div class="partners-grid">
-            <div class="partner-logo"><img src="img/logo 1.png"></div>
-            <div class="partner-logo"><img src="img/logo 2.png"></div>
-            <div class="partner-logo"><img src="img/logo 3.png"></div>
-            <div class="partner-logo"><img src="img/logo 4.png"></div>
+            <div class="partner-logo"><img src="~/img/logo 1.png"></div>
+            <div class="partner-logo"><img src="~/img/logo 2.png"></div>
+            <div class="partner-logo"><img src="~/img/logo 3.png"></div>
+            <div class="partner-logo"><img src="~/img/logo 4.png"></div>
         </div>
     </div>
 </section>
@@ -284,7 +288,8 @@
         <p>© 2025 VMD Bank. All right reserved.</p>
     </div>
 </footer>
-
+</body>
+</html>
 <script>
     // Hiệu ứng animation khi scroll
     document.addEventListener('DOMContentLoaded', function() {
