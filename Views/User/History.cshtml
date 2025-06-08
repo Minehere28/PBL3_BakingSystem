@@ -89,13 +89,18 @@
 
             <section class="transaction-content">
                 <div class="month-section">
-                    <div class="transaction">
-                        <div>
-                            <p><strong>ABC chuyển tiền</strong></p>
-                            <span>03/04/2025 - 08:45</span>
+                    @foreach(var trans in Model)
+                    {
+                        <div class="transaction">
+                            <div>
+                                <p><strong>@trans.Description</strong></p>
+                                <p><strong> Từ: 6789-Nguyễn Thị Sương Mai</strong></p>
+                                <span>03/04/2025 - 08:45</span>
+                            </div>
+                            <p class="inflow">+ 2,000,000 VND</p>
                         </div>
-                        <p class="inflow">+ 2,000,000 VND</p>
-                    </div>
+                    }
+                    
                     <div class="transaction">
                         <div>
                             <p><strong>Tiền lương</strong></p>
