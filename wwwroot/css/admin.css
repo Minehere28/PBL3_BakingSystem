@@ -49,6 +49,7 @@
     list-style: none;
     padding: 0;
     margin-top: 30px;
+    text-decoration: none;
 }
 
     .nav li {
@@ -58,10 +59,12 @@
         border-radius: 8px;
         cursor: pointer;
         transition: background 0.3s;
+        text-decoration: none;
     }
 
         .nav li:hover {
             background-color: #ffc0cb;
+            text-decoration: none;
         }
 
 .main-content {
@@ -214,59 +217,66 @@ button {
     max-width: 1000px;
     margin: 0 auto;
 }
+
 .admin-history-container {
-    background: rgba(255, 255, 255, 0.7); /* Lớp overlay mờ */
+    background: rgba(255, 255, 255, 0.95); /* Tăng độ mờ đục lên */
     padding: 20px;
     border-radius: 16px;
+    max-width: 1200px;
+    margin: auto;
+    backdrop-filter: blur(5px); /* Thêm hiệu ứng blur để đẹp hơn */
+}
+
+.admin-history-title {
+    font-size: 1.8rem;
+    color: #c2185b;
+    margin-bottom: 24px;
+    font-weight: bold;
+    text-align: center;
 }
 
 .admin-history-box {
-    background: white; /* Nền trắng đục cho toàn bộ khung */
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: #fff; /* Màu trắng solid */
+    padding: 24px 28px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
+/* Thay đổi màu sắc bảng */
 .admin-history-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: white; /* Đảm bảo bảng không trong suốt */
-    border-radius: 10px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff; /* Nền trắng solid */
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     overflow: hidden;
 }
 
     .admin-history-table th {
-        background: #ffe6f2; /* Màu hồng pastel cho header */
+        background: #ffebf3; /* Màu hồng pastel nhạt */
         color: #c2185b;
         padding: 12px 15px;
         text-align: left;
+        font-weight: 600;
     }
 
     .admin-history-table td {
         padding: 10px 15px;
-        border-bottom: 1px solid #ffebee;
-        background: white; /* Ô dữ liệu màu trắng */
+        background-color: #fff; /* Ô màu trắng */
+        border-bottom: 1px solid #ffe0eb; /* Viền hồng nhạt */
+        color: #333;
+    }
+
+    .admin-history-table tr:nth-child(even) td {
+        background-color: #fff9fb; /* Xen kẽ màu hồng rất nhạt */
     }
 
     .admin-history-table tr:hover td {
-        background: #fff5f7; /* Hiệu ứng hover */
+        background-color: #ffe6f2; /* Màu hồng nhạt khi hover */
     }
 
-.filter-btn {
-    background: #ff69b4;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-    .filter-btn:hover {
-        background: #e754a1;
-        transform: translateY(-2px);
-    }
+/* Các phần khác giữ nguyên */
 .date-filter {
     display: flex;
     align-items: center;
@@ -278,7 +288,6 @@ button {
     .date-filter label {
         font-weight: 600;
         color: #8b0055;
-        margin-right: 8px;
     }
 
     .date-filter input[type="date"] {
@@ -312,3 +321,54 @@ button {
             background-color: #e754a1;
             box-shadow: 0 6px 12px rgba(231, 84, 161, 0.4);
         }
+
+.popup {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.popup-content {
+    position: relative;
+    background-color: #fff;
+    color: #d63384;
+    padding: 30px 40px;
+    border-radius: 16px;
+    width: 420px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    animation: fadeInUp 0.3s ease-out;
+}
+
+    .popup-content p {
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+    .close-btn:hover {
+        color: #d63384;
+        transform: scale(1.2);
+    }
+
