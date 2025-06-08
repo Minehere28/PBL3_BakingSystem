@@ -7,12 +7,19 @@
     <div class="admin-history-container">
         <div class="admin-history-box">
             <h2 class="admin-history-title">Lịch sử giao dịch</h2>
-            <div class=" date-filter">
-            <form method="get" style="margin-bottom: 18px;">
-                <label>Từ ngày: <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" /></label>
-                <label>Đến ngày: <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" /></label>
-                <button type="submit" class="filter-btn">Lọc</button>
-            </form>
+
+            <div class="date-filter">
+                <form method="get" style="margin-bottom: 18px;">
+                    <label>
+                        Từ ngày:
+                        <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                    </label>
+                    <label>
+                        Đến ngày:
+                        <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                    </label>
+                    <button type="submit" class="filter-btn">Lọc</button>
+                </form>
             </div>
 
             <table class="admin-history-table">
@@ -103,10 +110,10 @@
             animation: fadeInUp 0.3s ease-out;
         }
 
-            .popup-content p {
-                font-size: 18px;
-                margin-top: 20px;
-            }
+        .popup-content p {
+            font-size: 18px;
+            margin-top: 20px;
+        }
 
         .close-btn {
             position: absolute;
@@ -120,24 +127,21 @@
             transition: color 0.2s ease;
         }
 
-            .close-btn:hover {
-                color: #d63384;
-                transform: scale(1.2);
+        .close-btn:hover {
+            color: #d63384;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-
-        @@keyframes fadeInUp {
-            from
-
-        {
-            opacity: 0;
-            transform: translateY(20px);
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        }</style>
+    </style>
 }
 
