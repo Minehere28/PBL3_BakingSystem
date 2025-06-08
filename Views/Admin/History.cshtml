@@ -45,7 +45,7 @@
 }
 
 @{
-    var daLoc = Request.Query["fromDate"].Count > 0 || Request.Query["toDate"].Count > 0;
+    var daLoc = Context.Request.Query.ContainsKey("fromDate") || Context.Request.Query.ContainsKey("toDate");
 }
 
 @if (daLoc && (Model.Transactions == null || !Model.Transactions.Any()))

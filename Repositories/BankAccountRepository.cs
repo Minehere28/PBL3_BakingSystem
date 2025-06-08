@@ -144,5 +144,16 @@ namespace PBL3.Repositories
                 .OrderByDescending(t => t.TransactionDate)
                 .ToList();
         }
+
+        public List<Trans> GetTransactionByAccountAndDate(int accountID, DateTime from, DateTime to)
+        {
+            return _context.Transactions
+                .Include(t => t.FromAccount).ThenInclude(a => a.user)
+                .Include(t => t.ToAccount).ThenInclude(a => a.user)
+                .Where(t => t.FromAccountId == accountID || t.ToAccountId == accountID)
+                .Where(t => t.TransactionDate >= from && t.TransactionDate <= to)
+                .OrderByDescending(t => t.TransactionDate)
+                .ToList();
+        }
     }
 }

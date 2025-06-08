@@ -325,5 +325,23 @@ html, body {
     .search-button:hover {
         background-color: #a91b4d;
     }
+.transaction-date {
+    display: block;
+    font-size: 0.95rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.transaction-description {
+    font-size: 1rem;
+    margin: 2px 0;
+}
+
+.transaction-party.emphasized {
+    font-size: 1rem; /* Cho bằng với dòng mô tả giao dịch */
+    font-weight: 600;
+    color: #444;
+}
+
 
 
