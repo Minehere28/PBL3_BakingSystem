@@ -177,22 +177,92 @@ namespace PBL3.Controllers
             };
             return View(model);
         }
+
         [HttpGet]
-        public IActionResult ListSTK()
+        public IActionResult ListSTK(string? searchBy, string? searchValue)
         {
             string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
-            {
                 return RedirectToAction("AccessDenied", "Account");
-            }
-            
-            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
-            if (string.IsNullOrEmpty(loggedInUserSdt) == true)
+
+            ViewBag.SearchBy = searchBy;
+            ViewBag.SearchValue = searchValue;
+
+            var accounts = _bankAccountService.GetAllBankAccounts();
+
+            // Lọc theo tiêu chí tìm kiếm
+            if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
             {
-                return RedirectToAction("Login", "Account");
+                switch (searchBy)
+                {
+                    case "AccountNumber":
+                        accounts = accounts
+                            .Where(a => a.AccountId.ToString().Contains(searchValue))
+                            .ToList();
+                        break;
+
+                    case "AccountName":
+                        accounts = accounts
+                            .Where(a => a.user != null && a.user.Hoten.Contains(searchValue, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
+                        break;
+
+                    case "Status":
+                        if (searchValue == "Active")
+                        {
+                            accounts = accounts
+                                .Where(a => a.IsActive()) // chỉ tài khoản đang hoạt động
+                                .ToList();
+                        }
+                        else if (searchValue == "Blocked")
+                        {
+                            accounts = accounts
+                                .Where(a => !a.IsActive()) // chỉ tài khoản đã bị khóa
+                                .ToList();
+                        }
+                        break;
+
+                    case "AccountType":
+                        accounts = accounts
+                            .Where(a =>
+                                (searchValue == "Thông thường" && a is RegularAccount) ||
+                                (searchValue == "Tiết kiệm" && a is SavingAccount) ||
+                                (searchValue == "Vay" && a is LoanAccount))
+                            .ToList();
+                        break;
+
+                    case "Balance":
+                        if (double.TryParse(searchValue, out double minBalance))
+                        {
+                            accounts = accounts
+                                .Where(a => a.Balance >= minBalance)
+                                .ToList();
+                        }
+                        break;
+                }
             }
-            return View();
+
+            var viewModel = accounts.Select(acc => new ListSTKViewModel
+            {
+                AccountId = acc.AccountId,
+                Sdt = acc.Sdt,
+                FullName = acc.user?.Hoten ?? "",
+                Balance = acc.Balance,
+                AccountType = acc switch
+                {
+                    RegularAccount => "Thông thường",
+                    SavingAccount => "Tiết kiệm",
+                    LoanAccount => "Vay",
+                    _ => "Không xác định"
+                },
+                IsActive = acc.IsActive(),
+                CreatedDate = acc.CreatedDate
+            }).ToList();
+
+            return View(viewModel);
         }
+
+
         public IActionResult Unlock()
         {
             // Kiểm tra quyền Admin
@@ -244,8 +314,86 @@ namespace PBL3.Controllers
                 ViewBag.Error = "Cập nhật thất bại: " + ex.Message;
             }
             return View();
-
-
         }
+        [HttpGet]
+        public IActionResult Deposit()
+        {
+            // Kiểm tra quyền Admin
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Admin")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            // Lấy thông tin Admin từ session
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            if (string.IsNullOrEmpty(loggedInUserSdt) == true)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Deposit(DepositViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var (success, message) = _bankAccountService.Deposit(model);
+            if (success)
+            {
+                ModelState.Clear();
+                var newModel = new DepositViewModel
+                {
+                    AccountId = model.AccountId,
+                    Amount = model.Amount,
+                };
+                ViewBag.Message = message;
+                return View(newModel);
+            }
+            ModelState.AddModelError("", message);
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult Withdraw(WithdrawViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var (success, message) = _bankAccountService.Withdraw(model);
+            if (success)
+            {
+                ModelState.Clear();
+                var newModel = new WithdrawViewModel
+                {
+                    AccountId = model.AccountId,
+                    Amount = model.Amount,
+                };
+                ViewBag.Message = message;
+                return View(newModel);
+            }
+            ModelState.AddModelError("", message);
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Withdraw()
+        {
+            // Kiểm tra quyền Admin
+            string role = HttpContext.Session.GetString("Role");
+            if (role != "Admin")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            // Lấy thông tin Admin từ session
+            string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
+            if (string.IsNullOrEmpty(loggedInUserSdt) == true)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            return View();
+        }
+
     }
 }

@@ -48,8 +48,12 @@ namespace PBL3.Services
                     model.Amount,
                     TransactionType.Transfer,
                     model.description
-                );
-
+                )
+                {
+                    SenderBalanceAfter = fromAccount.Balance,
+                    ReceiverBalanceAfter = toAccount.Balance
+                }
+                ;
                 _bankAccountRepo.Update(fromAccount);
                 _bankAccountRepo.Update(toAccount);
                 _bankAccountRepo.AddTrans(transaction);
@@ -126,6 +130,110 @@ namespace PBL3.Services
         public List<Trans> GetTransactionByAccountAndDate(int accountId, DateTime from, DateTime to)
         {
             return _bankAccountRepo.GetTransactionByAccountAndDate(accountId, from, to);
+        }
+
+        public List<BankAccount> GetAllBankAccounts()
+        {
+            return _bankAccountRepo.GetAllBankAccounts();
+        }
+
+        public (bool Success, string Message) Deposit(DepositViewModel model)
+        {
+            var account = GetRegularAccountByID(model.AccountId);
+
+            if (account == null)
+                return (false, "❌ Tài khoản không tồn tại.");
+
+            if (model.Amount <= 0)
+                return (false, "❌ Số tiền nạp phải lớn hơn 0.");
+
+            try
+            {
+                account.ReceiveTransfer(model.Amount);
+
+                // Tạo giao dịch kiểu "nạp tiền"
+                //var transaction = new Trans
+                //{
+                //    FromAccountId = 00000000, // admin mặc định
+                //    ToAccountId = model.AccountId,
+                //    Amount = model.Amount,
+                //    Description = $"Nạp tiền cho {model.AccountId}",
+                //    TransactionDate = DateTime.Now,
+                //    Type = TransactionType.Deposit,
+                //    ReceiverBalanceAfter = account.Balance,
+                //    SenderBalanceAfter = null // Admin không có tài khoản ngân hàng
+                //};
+                var transaction = new Trans(
+                    00000000,
+                    account.AccountId,
+                    null,
+                    account,
+                    model.Amount,
+                    TransactionType.Deposit,
+                    $"Nạp tiền cho {model.AccountId}"
+                )
+                {
+                    SenderBalanceAfter = null,
+                    ReceiverBalanceAfter = account.Balance
+                };
+                _bankAccountRepo.Update(account);
+                _bankAccountRepo.AddTrans(transaction);
+
+                return (true, $"✅ Nạp {model.Amount:N0} VND vào tài khoản {model.AccountId} thành công.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "❌ Gặp lỗi khi nạp tiền: " + ex.Message);
+            }
+        }
+        public (bool Success, string Message) Withdraw(WithdrawViewModel model)
+        {
+            var account = GetRegularAccountByID(model.AccountId);
+
+            if (account == null)
+                return (false, "❌ Tài khoản không tồn tại.");
+
+            if (model.Amount <= 0)
+                return (false, "❌ Số tiền rút phải lớn hơn 0.");
+
+            try
+            {
+                account.Withdraw(model.Amount);
+
+                // Tạo giao dịch kiểu "nạp tiền"
+                //var transaction = new Trans
+                //{
+                //    FromAccountId = 00000000, // admin mặc định
+                //    ToAccountId = model.AccountId,
+                //    Amount = model.Amount,
+                //    Description = $"Nạp tiền cho {model.AccountId}",
+                //    TransactionDate = DateTime.Now,
+                //    Type = TransactionType.Deposit,
+                //    ReceiverBalanceAfter = account.Balance,
+                //    SenderBalanceAfter = null // Admin không có tài khoản ngân hàng
+                //};
+                Trans transaction = new Trans(
+                    account.AccountId,
+                    00000000,
+                    account,
+                    null,
+                    model.Amount,
+                    TransactionType.Withdrawal,
+                    $"Rút tiền cho {model.AccountId}"
+                )
+                {
+                    SenderBalanceAfter = account.Balance,
+                    ReceiverBalanceAfter = null
+                };
+                _bankAccountRepo.Update(account);
+                _bankAccountRepo.AddTrans(transaction);
+
+                return (true, $"✅ Rút {model.Amount:N0} VND cho tài khoản {model.AccountId} thành công.");
+            }
+            catch (Exception ex)
+            {
+                return (false, "❌ Gặp lỗi khi rút tiền: " + ex.Message);
+            }
         }
     }
  }

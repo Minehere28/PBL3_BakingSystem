@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PBL3.Data;
 
@@ -11,9 +12,11 @@ using PBL3.Data;
 namespace PBL3.Migrations
 {
     [DbContext(typeof(BMContext))]
-    partial class BMContextModelSnapshot : ModelSnapshot
+    [Migration("20250609135834_updatePropertyInTrans")]
+    partial class updatePropertyInTrans
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,16 +73,16 @@ namespace PBL3.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FromAccountId")
+                    b.Property<int>("FromAccountId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("ReceiverBalanceAfter")
+                    b.Property<double>("ReceiverBalanceAfter")
                         .HasColumnType("float");
 
-                    b.Property<double?>("SenderBalanceAfter")
+                    b.Property<double>("SenderBalanceAfter")
                         .HasColumnType("float");
 
-                    b.Property<int?>("ToAccountId")
+                    b.Property<int>("ToAccountId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("TransactionDate")
@@ -181,12 +184,14 @@ namespace PBL3.Migrations
                     b.HasOne("BankAccount", "FromAccount")
                         .WithMany("SentTransactions")
                         .HasForeignKey("FromAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("BankAccount", "ToAccount")
                         .WithMany("ReceivedTransactions")
                         .HasForeignKey("ToAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("FromAccount");
 

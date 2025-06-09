@@ -23,13 +23,15 @@ namespace PBL3.Entities
         [Required]
         public TransactionType Type { get; set; } 
         public string? Description { get; set; }
+        public double? ReceiverBalanceAfter { get; set; }
+        public double? SenderBalanceAfter { get; set; }
 
         // Khóa ngoại
         [ForeignKey("FromAccount")]
-        public int FromAccountId { get; set; }
+        public int? FromAccountId { get; set; }
 
         [ForeignKey("ToAccount")]
-        public int ToAccountId { get; set; }
+        public int? ToAccountId { get; set; }
 
         public double Amount { get; set; }
 

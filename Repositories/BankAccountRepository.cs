@@ -113,7 +113,7 @@ namespace PBL3.Repositories
 
         public List<BankAccount> GetAllBankAccounts()
         {
-            return _context.BankAccounts.ToList();
+            return _context.BankAccounts.Include(a=>a.user).ToList();
         }
 
         public bool FreezeAccount(int accountID)

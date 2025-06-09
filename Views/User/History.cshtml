@@ -119,8 +119,21 @@
                                             string relatedAccountNumber = isReceiving ? trans.FromAccountId.ToString() : trans.ToAccountId.ToString();
                                             string relatedOwnerName = isReceiving ? trans.FromAccount?.user?.Hoten : trans.ToAccount?.user?.Hoten;
                                             string direction = isReceiving ? "Từ" : "Đến";
+                                            double? currentBalanceAfterTransaction = null;
+
+                                            if (trans.FromAccountId == currentAccountId)
+                                            {
+                                                currentBalanceAfterTransaction = trans.SenderBalanceAfter;
+                                            }
+                                            else if (trans.ToAccountId == currentAccountId)
+                                            {
+                                                currentBalanceAfterTransaction = trans.ReceiverBalanceAfter;
+                                            }
                                         }
                                         <p class="transaction-party emphasized">@direction: @relatedAccountNumber - @relatedOwnerName</p>
+                                        <p class="transaction-party" style="font-size: 0.85em; color: #555; margin-top: -5px;">
+                                            Cập nhật số dư: @currentBalanceAfterTransaction?.ToString("N0") VND
+                                        </p>
                                     </div>
                                     <p class="@(isReceiving ? "inflow" : "outflow")">
                                         @(isReceiving ? "+" : "-") @trans.Amount.ToString("N0") VND

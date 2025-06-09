@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PBL3.Data;
 
@@ -11,9 +12,11 @@ using PBL3.Data;
 namespace PBL3.Migrations
 {
     [DbContext(typeof(BMContext))]
-    partial class BMContextModelSnapshot : ModelSnapshot
+    [Migration("20250609150115_tt")]
+    partial class tt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,10 +76,10 @@ namespace PBL3.Migrations
                     b.Property<int?>("FromAccountId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("ReceiverBalanceAfter")
+                    b.Property<double>("ReceiverBalanceAfter")
                         .HasColumnType("float");
 
-                    b.Property<double?>("SenderBalanceAfter")
+                    b.Property<double>("SenderBalanceAfter")
                         .HasColumnType("float");
 
                     b.Property<int?>("ToAccountId")

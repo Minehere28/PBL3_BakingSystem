@@ -13,8 +13,11 @@ namespace PBL3.Services
         RegularAccount? GetRegularAccountByID(int id);
         LoanAccount? GetLoanAccountByID(int id);
         SavingAccount? GetSavingAccountByID(int id);
-        
+        List<BankAccount> GetAllBankAccounts();
+
         (bool Success, string Message) Transfer(TransferViewModel model);
+        (bool Success, string Message) Deposit(DepositViewModel model);
+        (bool Success, string Message) Withdraw(WithdrawViewModel model);
         double GetBalance(int accountId);
         bool IsAccountActive(string sdt);
         bool FreezeAccount(int accountId);

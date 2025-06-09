@@ -3,7 +3,7 @@
     public class RegularAccount : BankAccount
     {
         public double MonthlyFee { get; set; } = 5;
-        public double TransactionFee { get; set; } = 1;
+        public double TransactionFee { get; set; } = 0;
 
         public RegularAccount() : base(){        }
         public override void DisplayInfo()

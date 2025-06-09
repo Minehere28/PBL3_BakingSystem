@@ -114,7 +114,7 @@ namespace PBL3.Controllers
                     balance = _bankAccountService.GetBalance(model.FromAccountId)
                 };
                 ViewBag.Message = message;
-                return View(model);
+                return View(newModel);
             }
             ModelState.AddModelError("", message);
             return View(model);
