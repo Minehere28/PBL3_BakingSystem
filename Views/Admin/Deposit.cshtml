@@ -21,19 +21,21 @@
 
 			<div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
 				<button type="submit">Nạp tiền</button>
-		</form>
-
+			</div>
+		</form> <!-- ✅ Đóng form ở đây mới đúng -->
+		<!-- ✅ Đặt thông báo bên ngoài form -->
 		@if (ViewBag.Status != null)
 		{
-			<span style="color: #388e3c; font-weight: 500;">@ViewBag.Status</span>
+			<p style="color: #388e3c; font-weight: 500; margin-top: 12px;">@ViewBag.Status</p>
 		}
 
-	@if (ViewBag.Error != null)
-	{
-		<p style="color: #d32f2f; font-weight: 500; margin-top: 18px;">@ViewBag.Error</p>
-	}
-		</div>
+		@if (ViewBag.Error != null)
+		{
+			<p style="color: #d32f2f; font-weight: 500; margin-top: 12px;">@ViewBag.Error</p>
+		}
+	</div>
 }
+
 
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
