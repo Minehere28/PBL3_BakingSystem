@@ -24,6 +24,6 @@ namespace PBL3.Repositories
         List<BankAccount> GetAllBankAccounts();
         List<Trans>GetTransactionByDateRange(DateTime from, DateTime to);
         
-        List<Trans>GetTransactionByDateRange(int accountID, DateTime from, DateTime to);
+        List<Trans>GetTransactionByAccountAndDate(int accountID, DateTime from, DateTime to);
     }
 }

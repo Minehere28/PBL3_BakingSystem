@@ -168,6 +168,53 @@ namespace PBL3.Controllers
             }
             return View();
         }
+        [HttpPost]
+        public IActionResult History(DateTime FromDate, DateTime ToDate, string TransactionType)
+        {
+            ViewBag.HasFiltered = false;
+
+            if (FromDate == default || ToDate == default)
+            {
+                ViewBag.FromDate = "";
+                ViewBag.ToDate = "";
+                ViewBag.TransactionType = "All";
+                return View(new List<Trans>());
+            }
+
+            int accountId = Convert.ToInt32(HttpContext.Session.GetString("AccountId"));
+            if (accountId == 0) return NotFound();
+
+            var allTransactions = _bankAccountService.GetTransactionByAccountAndDate(accountId, FromDate, ToDate);
+
+            List<Trans> filteredTransactions = new List<Trans>();
+            switch (TransactionType)
+            {
+                case "In":
+                    filteredTransactions = allTransactions
+                        .Where(t => t.ToAccountId == accountId)
+                        .ToList();
+                    break;
+                case "Out":
+                    filteredTransactions = allTransactions
+                        .Where(t => t.FromAccountId == accountId)
+                        .ToList();
+                    break;
+                case "All":
+                default:
+                    filteredTransactions = allTransactions;
+                    break;
+            }
+
+            // Gửi lại dữ liệu lọc về view
+            ViewBag.HasFiltered = true;
+            ViewBag.FromDate = FromDate.ToString("yyyy-MM-dd");
+            ViewBag.ToDate = ToDate.ToString("yyyy-MM-dd");
+            ViewBag.TransactionType = TransactionType;
+
+            return View(filteredTransactions);
+        }
+
+
         [HttpGet]
         public IActionResult Saving()
         {

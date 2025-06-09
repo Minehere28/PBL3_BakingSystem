@@ -4,55 +4,56 @@
 }
 
 @section MainContent {
-        <div class="admin-history-container">
-            <div class="admin-history-box">
-                <h2 class="admin-history-title">Lịch sử giao dịch</h2>
+    <div class="admin-history-container">
+        <div class="admin-history-box">
+            <h2 class="admin-history-title">Lịch sử giao dịch</h2>
 
-                <div class="date-filter">
-                    <form method="get" style="margin-bottom: 18px;">
-                        <label>
-                            Từ ngày:
-                            <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
-                        </label>
-                        <label>
-                            Đến ngày:
-                            <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
-                        </label>
-                        <button type="submit" class="filter-btn">Lọc</button>
-                    </form>
-                </div>
-
-                <table class="admin-history-table">
-                    <thead>
-                        <tr>
-                            <th>Ngày</th>
-                            <th>ID</th>
-                            <th>Loại GD</th>
-                            <th>Người gửi</th>
-                            <th>STK gửi</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var t in Model.Transactions)
-                        {
-                            <tr>
-                                <td>@t.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>@t.TransactionId</td>
-                                <td>@t.Type</td>
-                                <td>@t.FromAccount?.user?.Hoten</td>
-                                <td>@t.FromAccountId</td>
-                                <td>@t.Amount.ToString("N0")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="date-filter">
+                <form method="get" style="margin-bottom: 18px;">
+                    <label>
+                        Từ ngày:
+                        <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                    </label>
+                    <label>
+                        Đến ngày:
+                        <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                    </label>
+                    <button type="submit" class="filter-btn">Lọc</button>
+                </form>
             </div>
-        </div>
 
-    }
-  
-var daLoc = Request.Query["fromDate"].Count > 0 || Request.Query["toDate"].Count > 0;
+            <table class="admin-history-table">
+                <thead>
+                    <tr>
+                        <th>Ngày</th>
+                        <th>ID</th>
+                        <th>Loại GD</th>
+                        <th>Người gửi</th>
+                        <th>STK gửi</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.Transactions)
+                    {
+                        <tr>
+                            <td>@t.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@t.TransactionId</td>
+                            <td>@t.Type</td>
+                            <td>@t.FromAccount?.user?.Hoten</td>
+                            <td>@t.FromAccountId</td>
+                            <td>@t.Amount.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@{
+    var daLoc = Context.Request.Query.ContainsKey("fromDate") || Context.Request.Query.ContainsKey("toDate");
+}
 
 @if (daLoc && (Model.Transactions == null || !Model.Transactions.Any()))
 {
@@ -79,6 +80,68 @@ var daLoc = Request.Query["fromDate"].Count > 0 || Request.Query["toDate"].Count
             }, 50);
         }
     </script>
-}
 
+    <style>
+        .popup {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .popup-content {
+            position: relative;
+            background-color: #fff;
+            color: #d63384;
+            padding: 30px 40px;
+            border-radius: 16px;
+            width: 420px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .popup-content p {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            color: #d63384;
+            transform: scale(1.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+}
 

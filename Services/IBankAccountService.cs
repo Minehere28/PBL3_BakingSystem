@@ -21,5 +21,6 @@ namespace PBL3.Services
         BankAccount? GetByID(int id);
         bool UnlockAccount(int accountId);
         List<Trans> GetTransactionByDateRange(DateTime from, DateTime to);
+        List<Trans> GetTransactionByAccountAndDate(int accountId, DateTime from, DateTime to);
     }
 }

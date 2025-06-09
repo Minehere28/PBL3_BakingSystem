@@ -122,6 +122,11 @@ namespace PBL3.Services
         {
             return _bankAccountRepo.GetTransactionByDateRange(from, to);
         }
+
+        public List<Trans> GetTransactionByAccountAndDate(int accountId, DateTime from, DateTime to)
+        {
+            return _bankAccountRepo.GetTransactionByAccountAndDate(accountId, from, to);
+        }
     }
  }
 

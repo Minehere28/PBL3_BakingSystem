@@ -1,8 +1,11 @@
-﻿@{
-    Layout = null;
-}
+﻿@using System.Linq
+@model List<PBL3.Entities.Trans>
 @{
+    Layout = null;
     bool showTransactions = ViewBag.HasFiltered ?? false;
+    var fromDate = ViewBag.FromDate as string ?? "";
+    var toDate = ViewBag.ToDate as string ?? "";
+    var transactionType = ViewBag.TransactionType as string ?? "All";
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -60,7 +63,7 @@
     <div class="main-content">
         <div class="container">
             <header class="header">
-                <h1>Lịch sử giao dịch</h1> <!-- Đưa lên trên -->
+                <h1>Lịch sử giao dịch</h1>
             </header>
 
             <section class="account-info">
@@ -69,29 +72,33 @@
                 <p class="balance"><strong>Số dư:</strong> 12,500,000 VND</p>
             </section>
 
-            <!-- Bố cục chọn ngày sau thông tin tài khoản -->
-            <form method="get" action="@Url.Action("History", "User")">
+            <!-- Filter form -->
+            <form id="filter-form" method="post" action="@Url.Action("History", "User")">
                 <div class="date-filter">
                     <div class="date-group">
                         <label for="from-date">Từ ngày:</label>
-                        <input type="date" id="from-date" name="FromDate" />
+                        <input type="date" id="from-date" name="FromDate" value="@fromDate" />
                     </div>
                     <div class="date-group">
                         <label for="to-date">Đến ngày:</label>
-                        <input type="date" id="to-date" name="ToDate" />
+                        <input type="date" id="to-date" name="ToDate" value="@toDate" />
                     </div>
+                    <input type="hidden" name="TransactionType" id="transaction-type" value="@transactionType" />
                     <button type="submit" class="search-button">Tìm kiếm</button>
                 </div>
+
+                @if (showTransactions)
+                {
+                    <section class="filter-buttons">
+                        <button type="button" class="filter-btn @(transactionType == "All" ? "active" : "")" data-value="All">Tất cả</button>
+                        <button type="button" class="filter-btn @(transactionType == "In" ? "active" : "")" data-value="In">Tiền vào</button>
+                        <button type="button" class="filter-btn @(transactionType == "Out" ? "active" : "")" data-value="Out">Tiền ra</button>
+                    </section>
+                }
             </form>
 
             @if (showTransactions)
             {
-                <section class="filter-buttons">
-                    <button class="active">Tất cả</button>
-                    <button>Tiền vào</button>
-                    <button>Tiền ra</button>
-                </section>
-
                 <section class="transaction-content">
                     <div class="month-section">
                         @if (!Model.Any())
@@ -104,11 +111,19 @@
                             {
                                 <div class="transaction">
                                     <div>
-                                        <p><strong>@trans.Description</strong></p>
-                                        <span>@trans.Date.ToString("dd/MM/yyyy - HH:mm")</span>
+                                        <span class="transaction-date">@trans.TransactionDate.ToString("dd/MM/yyyy - HH:mm")</span>
+                                        <p class="transaction-description"><strong>@trans.Description</strong></p>
+                                        @{
+                                            int currentAccountId = Convert.ToInt32(Context.Session.GetString("AccountId"));
+                                            bool isReceiving = trans.ToAccountId == currentAccountId;
+                                            string relatedAccountNumber = isReceiving ? trans.FromAccountId.ToString() : trans.ToAccountId.ToString();
+                                            string relatedOwnerName = isReceiving ? trans.FromAccount?.user?.Hoten : trans.ToAccount?.user?.Hoten;
+                                            string direction = isReceiving ? "Từ" : "Đến";
+                                        }
+                                        <p class="transaction-party emphasized">@direction: @relatedAccountNumber - @relatedOwnerName</p>
                                     </div>
-                                    <p class="@(trans.Amount > 0 ? "inflow" : "outflow")">
-                                        @(trans.Amount > 0 ? "+" : "-") @Math.Abs(trans.Amount).ToString("N0") VND
+                                    <p class="@(isReceiving ? "inflow" : "outflow")">
+                                        @(isReceiving ? "+" : "-") @trans.Amount.ToString("N0") VND
                                     </p>
                                 </div>
                             }
@@ -118,5 +133,16 @@
             }
         </div>
     </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.getAttribute('data-value');
+                document.getElementById('transaction-type').value = type;
+                document.getElementById('filter-form').submit();
+            });
+        });
+    </script>
 </body>
 </html>
