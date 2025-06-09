@@ -150,21 +150,8 @@ namespace PBL3.Services
             try
             {
                 account.ReceiveTransfer(model.Amount);
-
-                // Tạo giao dịch kiểu "nạp tiền"
-                //var transaction = new Trans
-                //{
-                //    FromAccountId = 00000000, // admin mặc định
-                //    ToAccountId = model.AccountId,
-                //    Amount = model.Amount,
-                //    Description = $"Nạp tiền cho {model.AccountId}",
-                //    TransactionDate = DateTime.Now,
-                //    Type = TransactionType.Deposit,
-                //    ReceiverBalanceAfter = account.Balance,
-                //    SenderBalanceAfter = null // Admin không có tài khoản ngân hàng
-                //};
-                var transaction = new Trans(
-                    00000000,
+                Trans transaction = new Trans(
+                    null,
                     account.AccountId,
                     null,
                     account,
@@ -200,21 +187,9 @@ namespace PBL3.Services
             {
                 account.Withdraw(model.Amount);
 
-                // Tạo giao dịch kiểu "nạp tiền"
-                //var transaction = new Trans
-                //{
-                //    FromAccountId = 00000000, // admin mặc định
-                //    ToAccountId = model.AccountId,
-                //    Amount = model.Amount,
-                //    Description = $"Nạp tiền cho {model.AccountId}",
-                //    TransactionDate = DateTime.Now,
-                //    Type = TransactionType.Deposit,
-                //    ReceiverBalanceAfter = account.Balance,
-                //    SenderBalanceAfter = null // Admin không có tài khoản ngân hàng
-                //};
                 Trans transaction = new Trans(
                     account.AccountId,
-                    00000000,
+                    null,
                     account,
                     null,
                     model.Amount,

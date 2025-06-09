@@ -140,7 +140,8 @@ namespace PBL3.Repositories
         {
             return _context.Transactions
                 .Include(t => t.FromAccount).ThenInclude(a => a.user)
-                .Where(t=>t.TransactionDate >= from && t.TransactionDate <= to)
+                .Include(t => t.ToAccount).ThenInclude(a => a.user) // THÊM DÒNG NÀY
+                .Where(t => t.TransactionDate >= from && t.TransactionDate <= to.AddDays(1))
                 .OrderByDescending(t => t.TransactionDate)
                 .ToList();
         }
@@ -151,7 +152,7 @@ namespace PBL3.Repositories
                 .Include(t => t.FromAccount).ThenInclude(a => a.user)
                 .Include(t => t.ToAccount).ThenInclude(a => a.user)
                 .Where(t => t.FromAccountId == accountID || t.ToAccountId == accountID)
-                .Where(t => t.TransactionDate >= from && t.TransactionDate <= to)
+                .Where(t => t.TransactionDate >= from && t.TransactionDate <= to.AddDays(1))
                 .OrderByDescending(t => t.TransactionDate)
                 .ToList();
         }

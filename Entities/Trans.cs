@@ -47,12 +47,10 @@ namespace PBL3.Entities
             if (amount <= 0)
                 throw new ArgumentException("Số tiền phải lớn hơn 0", nameof(amount));
             if (fromAccountId.HasValue && toAccountId.HasValue && fromAccountId == toAccountId)
-                throw new ArgumentException("Tài khoản gửi và tài khoản nhận không thể giống nhau",nameof(fromAccountId));
-            if (fromAccountId == toAccountId)
                 throw new ArgumentException("Tài khoản gửi và tài khoản nhận không thể giống nhau", nameof(fromAccountId));
 
-            FromAccountId = fromAccountId ?? 0;
-            ToAccountId = toAccountId ?? 0;
+            FromAccountId = fromAccountId;
+            ToAccountId = toAccountId;
             FromAccount = fromAccount;
             ToAccount = toAccount;
             Amount = amount;

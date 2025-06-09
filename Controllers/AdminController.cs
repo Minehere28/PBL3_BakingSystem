@@ -57,40 +57,6 @@ namespace PBL3.Controllers
 
             return View();
         }
-        [HttpPost]
-        public IActionResult ChangePassword(ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("UserInfo", model);
-            }
-
-            if (model.NewPassword != model.ConfirmPassword)
-            {
-                ModelState.AddModelError("", "Mật khẩu xác nhận không khớp.");
-                return View("UserInfo", model);
-            }
-            string sdt = HttpContext.Session.GetString("Sdt");
-            if (string.IsNullOrEmpty(sdt))
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            bool result = _userService.ChangePassword(sdt, model.NewPassword);
-            if (!result)
-            {
-                ModelState.AddModelError("", "Không tìm thấy người dùng.");
-                return View("AdminInfo", model);
-            }
-            ViewBag.Status = "✅ Mật khẩu đã được cập nhật thành công!";
-            model.NewPassword = model.ConfirmPassword = string.Empty;
-
-            User user = _userService.GetUserBySdt(sdt);
-            ViewBag.Hoten = user?.Hoten;
-            ViewBag.Username = user?.Sdt;
-            ViewBag.NS = user?.NS;
-
-            return View("AdminInfo", model);
-        }
         public IActionResult Freeze()
         {
             // Kiểm tra quyền Admin
@@ -146,8 +112,9 @@ namespace PBL3.Controllers
             return View();
         }
         [HttpGet]
-        public IActionResult History(DateTime? fromDate, DateTime? toDate)
+        public IActionResult History(DateTime? fromDate, DateTime? toDate, string searchBy, string searchValue)
         {
+            // Kiểm tra quyền Admin
             string role = HttpContext.Session.GetString("Role");
             if (role != "Admin")
             {
@@ -155,7 +122,7 @@ namespace PBL3.Controllers
             }
 
             string loggedInUserSdt = HttpContext.Session.GetString("Sdt");
-            if (string.IsNullOrEmpty(loggedInUserSdt) == true)
+            if (string.IsNullOrEmpty(loggedInUserSdt))
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -164,19 +131,61 @@ namespace PBL3.Controllers
             DateTime from = fromDate ?? to.AddDays(-30);
 
             var transactions = _bankAccountService.GetTransactionByDateRange(from, to);
-            
+
+            // Bắt đầu lọc theo search
+            if (!string.IsNullOrEmpty(searchBy) && !string.IsNullOrEmpty(searchValue))
+            {
+                string sv = searchValue.Trim(); // giữ nguyên gốc
+                string svLower = sv.ToLower();  // dùng cho lọc chuỗi
+
+                transactions = searchBy switch
+                {
+                    "stk_nguoigui" => int.TryParse(sv, out var fromId)
+                        ? transactions.Where(t => t.FromAccountId == fromId).ToList()
+                        : new List<Trans>(),
+
+                    "hoten_nguoigui" => transactions
+                        .Where(t => t.FromAccount?.user?.Hoten != null && t.FromAccount.user.Hoten.ToLower().Contains(svLower))
+                        .ToList(),
+
+                    "stk_nguoinhan" => int.TryParse(sv, out var toId)
+                        ? transactions.Where(t => t.ToAccountId == toId).ToList()
+                        : new List<Trans>(),
+
+                    "hoten_nguoinhan" => transactions
+                        .Where(t => t.ToAccount?.user?.Hoten != null &&
+                                    t.ToAccount.user.Hoten.ToLower().Contains(svLower))
+                        .ToList(),
+
+                    "sotien" => double.TryParse(sv, out var amount)
+                        ? transactions.Where(t => t.Amount >= amount).ToList()
+                        : new List<Trans>(),
+
+                    "loaigd" => transactions
+                        .Where(t => t.Type.ToString().Equals(sv, StringComparison.OrdinalIgnoreCase))
+                        .ToList(),
+
+                    _ => transactions
+                };
+            }
+            System.Diagnostics.Debug.WriteLine("Số giao dịch sau lọc: " + transactions.Count);
             if (transactions.Count == 0)
             {
-                ViewBag.Message = "Không có giao dịch nào trong khoảng thời gian này.";
+                ViewBag.Message = "Không có giao dịch nào trong khoảng thời gian này hoặc theo điều kiện lọc.";
             }
+
             var model = new AdminHistoryViewModel
             {
                 Transactions = transactions,
                 FromDate = from,
-                ToDate = to
+                ToDate = to,
+                SearchBy = searchBy,
+                SearchValue = searchValue
             };
+
             return View(model);
         }
+
 
         [HttpGet]
         public IActionResult ListSTK(string? searchBy, string? searchValue)
@@ -339,19 +348,30 @@ namespace PBL3.Controllers
             {
                 return View(model);
             }
-            var (success, message) = _bankAccountService.Deposit(model);
-            if (success)
+            try
             {
-                ModelState.Clear();
-                var newModel = new DepositViewModel
+                var (success, message) = _bankAccountService.Deposit(model);
+                if (!success)
                 {
-                    AccountId = model.AccountId,
-                    Amount = model.Amount,
-                };
-                ViewBag.Message = message;
-                return View(newModel);
+                    ViewBag.Error = message;
+                    return View(model);
+                }
+                else
+                {
+                    ModelState.Clear();
+                    var newModel = new DepositViewModel
+                    {
+                        AccountId = model.AccountId,
+                        Amount = model.Amount,
+                    };
+                    ViewBag.Status = message;
+                    return View(newModel);
+                }
             }
-            ModelState.AddModelError("", message);
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Cập nhật thất bại: " + ex.Message;
+            }
             return View(model);
         }
         [HttpPost]
@@ -361,19 +381,30 @@ namespace PBL3.Controllers
             {
                 return View(model);
             }
-            var (success, message) = _bankAccountService.Withdraw(model);
-            if (success)
+            try
             {
-                ModelState.Clear();
-                var newModel = new WithdrawViewModel
+                var (success, message) = _bankAccountService.Withdraw(model);
+                if (!success)
                 {
-                    AccountId = model.AccountId,
-                    Amount = model.Amount,
-                };
-                ViewBag.Message = message;
-                return View(newModel);
+                    ViewBag.Error = message;
+                    return View(model);
+                }
+                else
+                {
+                    ModelState.Clear();
+                    var newModel = new WithdrawViewModel
+                    {
+                        AccountId = model.AccountId,
+                        Amount = model.Amount,
+                    };
+                    ViewBag.Status = message;
+                    return View(newModel);
+                }
             }
-            ModelState.AddModelError("", message);
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Cập nhật thất bại: " + ex.Message;
+            }
             return View(model);
         }
 

@@ -1,14 +1,10 @@
-﻿@model PBL3.Models.ChangePasswordViewModel
-@{
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 @section MainContent {
     <section id="adminInfo" class="section active">
         <h2>Thông Tin Quản Trị Viên</h2>
-
-        @using (Html.BeginForm("ChangePassword", "Admin", FormMethod.Post))
-        {
             <div class="info-group">
                 <label class="info-label">Họ và tên</label>
                 <div class="info-value">@ViewBag.HoTen</div>
@@ -23,50 +19,5 @@
                 <label class="info-label">Ngày sinh</label>
                 <div class="info-value">@ViewBag.NgaySinh.ToString("dd/MM/yyyy")</div>
             </div>
-
-            <hr style="margin: 30px 0; border-color: #ffc0cb;" />
-
-            <div class="info-group">
-                <label class="info-label">Mật khẩu mới</label>
-                @Html.PasswordFor(m => m.NewPassword, new { id = "newPassword", placeholder = "Nhập mật khẩu mới..." })
-            </div>
-
-            <div class="info-group">
-                <label class="info-label">Xác nhận mật khẩu mới</label>
-                @Html.PasswordFor(m => m.ConfirmPassword, new { id = "confirmPassword", placeholder = "Nhập lại mật khẩu mới..." })
-            </div>
-
-            <div class="show-password">
-                <input type="checkbox" id="togglePassword" onchange="togglePasswordVisibility()" />
-                <label for="togglePassword">Hiện mật khẩu</label>
-            </div>
-
-            <button type="submit">Cập nhật mật khẩu</button>
-        }
-
-        @if (ViewBag.Status != null)
-        {
-            <p style="color: green;">@ViewBag.Status</p>
-        }
-
-        @foreach (var err in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-        {
-            <p style="color: red;">@err.ErrorMessage</p>
-        }
     </section>
-}
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        function togglePasswordVisibility() {
-            const newPass = document.getElementById("newPassword");
-            const confirmPass = document.getElementById("confirmPassword");
-            const isChecked = document.getElementById("togglePassword").checked;
-            if (newPass && confirmPass) {
-                newPass.type = isChecked ? "text" : "password";
-                confirmPass.type = isChecked ? "text" : "password";
-            }
-        }
-    </script>
 }

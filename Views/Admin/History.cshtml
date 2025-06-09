@@ -1,4 +1,5 @@
-﻿@model AdminHistoryViewModel
+﻿@using PBL3.Entities
+@model AdminHistoryViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -10,15 +11,50 @@
 
             <div class="date-filter">
                 <form method="get" style="margin-bottom: 18px;">
-                    <label>
-                        Từ ngày:
-                        <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
-                    </label>
-                    <label>
-                        Đến ngày:
-                        <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
-                    </label>
-                    <button type="submit" class="filter-btn">Lọc</button>
+                    <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                        <label>
+                            Từ ngày:
+                            <input type="date" name="fromDate" value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                        </label>
+
+                        <label>
+                            Đến ngày:
+                            <input type="date" name="toDate" value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                        </label>
+
+                        <label style="font-weight: bold;">
+                            Tìm kiếm theo:
+                        </label>
+
+                        <div class="search-options">
+                            <label><input type="radio" name="searchBy" value="stk_nguoigui" @(Model.SearchBy == "stk_nguoigui" ? "checked" : "") onchange="updateInputVisibility()"> STK người gửi</label>
+                            <label><input type="radio" name="searchBy" value="hoten_nguoigui" @(Model.SearchBy == "hoten_nguoigui" ? "checked" : "") onchange="updateInputVisibility()"> Tên người gửi</label>
+                            <label><input type="radio" name="searchBy" value="sotien" @(Model.SearchBy == "sotien" ? "checked" : "") onchange="updateInputVisibility()"> Số tiền</label>
+                            <label><input type="radio" name="searchBy" value="stk_nguoinhan" @(Model.SearchBy == "stk_nguoinhan" ? "checked" : "") onchange="updateInputVisibility()"> STK người nhận</label>
+                            <label><input type="radio" name="searchBy" value="hoten_nguoinhan" @(Model.SearchBy == "hoten_nguoinhan" ? "checked" : "") onchange="updateInputVisibility()"> Họ tên người nhận</label>
+                            <label><input type="radio" name="searchBy" value="loaigd" @(Model.SearchBy == "loaigd" ? "checked" : "") onchange="updateInputVisibility()"> Loại giao dịch</label>
+                        </div>
+                        <!-- Text Input -->
+                        <input type="text" id="searchText" name="searchValue" class="search-input"
+                               style="display:none"
+                               placeholder="Nhập từ khóa..." value="@(Model.SearchBy != "sotien" && Model.SearchBy != "loaigd" ? Model.SearchValue : "")" />
+
+                        <!-- Money Input -->
+                        <input type="number" id="searchMoney" name="searchValue" class="search-input"
+                               style="display:none"
+                               placeholder="Nhập số tiền..." value="@(Model.SearchBy == "sotien" ? Model.SearchValue : "")" />
+
+                        <!-- Giao dịch Radio -->
+                        <div id="transactionTypeOptions" class="search-radio-group" style="display:none;">
+                            <label><input type="radio" name="searchValue" value="Transfer" @(Model.SearchBy == "loaigd" && Model.SearchValue == "Transfer" ? "checked" : "")> Chuyển tiền</label>
+                            <label><input type="radio" name="searchValue" value="Deposit" @(Model.SearchBy == "loaigd" && Model.SearchValue == "Deposit" ? "checked" : "")> Nạp tiền</label>
+                            <label><input type="radio" name="searchValue" value="Withdrawal" @(Model.SearchBy == "loaigd" && Model.SearchValue == "Withdrawal" ? "checked" : "")> Rút tiền</label>
+                            <label><input type="radio" name="searchValue" value="Savings" @(Model.SearchBy == "loaigd" && Model.SearchValue == "Savings" ? "checked" : "")> Gửi tiết kiệm</label>
+                            <label><input type="radio" name="searchValue" value="Loan" @(Model.SearchBy == "loaigd" && Model.SearchValue == "Loan" ? "checked" : "")> Vay vốn</label>
+                        </div>
+                        <button type="submit" class="search-button">Lọc</button>
+
+                    </div>
                 </form>
             </div>
 
@@ -30,6 +66,8 @@
                         <th>Loại GD</th>
                         <th>Người gửi</th>
                         <th>STK gửi</th>
+                        <th>Người nhận</th> <!-- MỚI -->
+                        <th>STK nhận</th>   <!-- MỚI -->
                         <th>Amount</th>
                     </tr>
                 </thead>
@@ -42,6 +80,8 @@
                             <td>@t.Type</td>
                             <td>@t.FromAccount?.user?.Hoten</td>
                             <td>@t.FromAccountId</td>
+                            <td>@t.ToAccount?.user?.Hoten</td>   <!-- MỚI -->
+                            <td>@t.ToAccountId</td>              <!-- MỚI -->
                             <td>@t.Amount.ToString("N0")</td>
                         </tr>
                     }
@@ -50,98 +90,27 @@
         </div>
     </div>
 }
-
-@{
-    var daLoc = Context.Request.Query.ContainsKey("fromDate") || Context.Request.Query.ContainsKey("toDate");
-}
-
-@if (daLoc && (Model.Transactions == null || !Model.Transactions.Any()))
-{
-    <div id="popup-no-data" class="popup">
-        <div class="popup-content">
-            <button class="close-btn" onclick="closePopup()">×</button>
-            <p>😕 Không tìm thấy giao dịch nào trong khoảng thời gian này.</p>
-        </div>
-    </div>
-
+@section Scripts {
     <script>
-        function closePopup() {
-            document.getElementById("popup-no-data").style.opacity = 0;
-            setTimeout(() => {
-                document.getElementById("popup-no-data").style.display = "none";
-            }, 300);
-        }
+        function updateInputVisibility() {
+        const selected = document.querySelector('input[name="searchBy"]:checked')?.value;
+        document.getElementById("searchText").style.display = "none";
+        document.getElementById("searchMoney").style.display = "none";
+        document.getElementById("transactionTypeOptions").style.display = "none";
 
-        window.onload = function () {
-            const popup = document.getElementById("popup-no-data");
-            popup.style.display = "flex";
-            setTimeout(() => {
-                popup.style.opacity = 1;
-            }, 50);
-        }
+        
+                if (["stk_nguoigui", "hoten_nguoigui", "stk_nguoinhan", "hoten_nguoinhan"].includes(selected)) {
+                    document.getElementById("searchText").style.display = "block";
+                } else if (selected === "sotien") {
+                    document.getElementById("searchMoney").style.display = "block";
+                } else if (selected === "loaigd") {
+                    document.getElementById("transactionTypeOptions").style.display = "flex";
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", updateInputVisibility);
     </script>
 
-    <style>
-        .popup {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        .popup-content {
-            position: relative;
-            background-color: #fff;
-            color: #d63384;
-            padding: 30px 40px;
-            border-radius: 16px;
-            width: 420px;
-            max-width: 90%;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            animation: fadeInUp 0.3s ease-out;
-        }
-
-        .popup-content p {
-            font-size: 18px;
-            margin-top: 20px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 24px;
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .close-btn:hover {
-            color: #d63384;
-            transform: scale(1.2);
-        }
-
-        @@keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+}
 }
 

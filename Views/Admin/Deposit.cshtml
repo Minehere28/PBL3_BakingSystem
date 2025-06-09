@@ -21,13 +21,13 @@
 
 			<div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
 				<button type="submit">Nạp tiền</button>
-			</div>
 		</form> <!-- ✅ Đóng form ở đây mới đúng -->
 		<!-- ✅ Đặt thông báo bên ngoài form -->
 		@if (ViewBag.Status != null)
 		{
 			<p style="color: #388e3c; font-weight: 500; margin-top: 12px;">@ViewBag.Status</p>
 		}
+		</div>
 
 		@if (ViewBag.Error != null)
 		{
