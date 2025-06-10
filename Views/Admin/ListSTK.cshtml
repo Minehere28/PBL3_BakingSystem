@@ -25,18 +25,6 @@
                     </label>
 
                     <label>
-                        <input type="radio" name="searchBy" value="Status"
-                        @(searchBy == "Status" ? "checked" : "")
-                               onchange="handleSearchOptionChange()"> Trạng thái hoạt động
-                    </label>
-
-                    <label>
-                        <input type="radio" name="searchBy" value="AccountType"
-                        @(searchBy == "AccountType" ? "checked" : "")
-                               onchange="handleSearchOptionChange()"> Loại tài khoản
-                    </label>
-
-                    <label>
                         <input type="radio" name="searchBy" value="Balance"
                         @(searchBy == "Balance" ? "checked" : "")
                                onchange="handleSearchOptionChange()"> Số dư
@@ -48,34 +36,6 @@
                        placeholder="Nhập giá trị..."
                        value="@((searchBy != "Status" && searchBy != "AccountType") ? searchValue : "")" />
 
-                <div id="statusOptions" class="search-radio-group" style="display: none;">
-                    <label>
-                        <input type="radio" name="searchValue" value="Active"
-                        @(searchBy == "Status" && searchValue == "Active" ? "checked" : "")> Hoạt động
-                    </label>
-
-                    <label>
-                        <input type="radio" name="searchValue" value="Blocked"
-                        @(searchBy == "Status" && searchValue == "Blocked" ? "checked" : "")> Đã khóa
-                    </label>
-                </div>
-
-                <div id="typeOptions" class="search-radio-group" style="display: none;">
-                    <label>
-                        <input type="radio" name="searchValue" value="Thông thường"
-                        @(searchBy == "AccountType" && searchValue == "Thông thường" ? "checked" : "")> Thông thường
-                    </label>
-
-                    <label>
-                        <input type="radio" name="searchValue" value="Tiết kiệm"
-                        @(searchBy == "AccountType" && searchValue == "Tiết kiệm" ? "checked" : "")> Tiết kiệm
-                    </label>
-
-                    <label>
-                        <input type="radio" name="searchValue" value="Vay"
-                        @(searchBy == "AccountType" && searchValue == "Vay" ? "checked" : "")> Vay
-                    </label>
-                </div>
 
                 <button type="submit" class="search-button">🔍 Tìm</button>
             </form>
@@ -116,22 +76,14 @@
         function handleSearchOptionChange() {
             const selectedOption = document.querySelector('input[name="searchBy"]:checked').value;
             const textInput = document.getElementById("searchValueText");
-            const statusOptions = document.getElementById("statusOptions");
-            const typeOptions = document.getElementById("typeOptions");
+            
 
             // Reset
             textInput.style.display = "none";
-            statusOptions.style.display = "none";
-            typeOptions.style.display = "none";
+            
 
-            if (selectedOption === "Status") {
-                statusOptions.style.display = "flex";
-            } else if (selectedOption === "AccountType") {
-                typeOptions.style.display = "flex";
-            } else {
                 textInput.style.display = "block";
-                textInput.placeholder = selectedOption === "Balance" ? "Từ: ... (VND)" : "Nhập giá trị...";
-            }
+             textInput.placeholder = selectedOption === "Balance" ? "Từ: ... (VND)" : "Nhập giá trị...";
         }
 
         // Gọi lại sau khi trang load xong

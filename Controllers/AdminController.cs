@@ -161,10 +161,6 @@ namespace PBL3.Controllers
                         ? transactions.Where(t => t.Amount >= amount).ToList()
                         : new List<Trans>(),
 
-                    "loaigd" => transactions
-                        .Where(t => t.Type.ToString().Equals(sv, StringComparison.OrdinalIgnoreCase))
-                        .ToList(),
-
                     _ => transactions
                 };
             }
