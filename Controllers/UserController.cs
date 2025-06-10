@@ -166,6 +166,19 @@ namespace PBL3.Controllers
             {
                 return RedirectToAction("Login", "Account");
             }
+            // Lấy AccountId từ session
+            int accountId = Convert.ToInt32(HttpContext.Session.GetString("AccountId"));
+            // Lấy thông tin tài khoản từ service
+            var account = _bankAccountService.GetRegularAccountByID(accountId);
+            if (account == null)
+            {
+                // Xử lý trường hợp không tìm thấy tài khoản
+                return RedirectToAction("Login", "Account");
+            }
+            // Truyền dữ liệu lên ViewBag
+            ViewBag.AccountId = account.AccountId;
+            ViewBag.OwnerName = account.user?.Hoten;
+            ViewBag.Balance = account.Balance;
             return View();
         }
         [HttpPost]

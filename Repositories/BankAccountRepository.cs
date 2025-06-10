@@ -28,47 +28,44 @@ namespace PBL3.Repositories
         {
             return _context.BankAccounts
                 .OfType<RegularAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.Sdt == sdt);
         }
         public LoanAccount? GetLoanAccountBySdt(string sdt)
         {
             return _context.BankAccounts
                 .OfType<LoanAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.Sdt == sdt);
         }
         public SavingAccount? GetSavingsAccountBySdt(string sdt)
         {
             return _context.BankAccounts
                 .OfType<SavingAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.Sdt == sdt);
         }
         public RegularAccount? GetRegularAccountByID(int id)
         {
             return _context.BankAccounts
                 .OfType<RegularAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.AccountId == id);
         }
         public LoanAccount? GetLoanAccountByID(int id)
         {
             return _context.BankAccounts
                 .OfType<LoanAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.AccountId == id);
         }
         public SavingAccount? GetSavingsAccountByID(int id)
         {
             return _context.BankAccounts
                 .OfType<SavingAccount>()
+                .Include(a => a.user)
                 .FirstOrDefault(a => a.AccountId == id);
         }
-
-        ////Sửa lại logic phương thức này
-        //public string? GetAccountType(string sdt, int accountId)
-        //{
-        //    return _context.BankAccounts
-        //        .Where(b => b.Sdt == sdt && b.AccountId == accountId)
-        //        .Select(b => EF.Property<string>(b, "AccountType"))
-        //        .FirstOrDefault();
-        //}
         public void Update(BankAccount bankAccount)
         {
             _context.BankAccounts.Update(bankAccount);
@@ -76,7 +73,7 @@ namespace PBL3.Repositories
         }
         public BankAccount? GetByID(int id)
         {
-            return _context.BankAccounts.FirstOrDefault(a => a.AccountId == id);
+            return _context.BankAccounts.Include(a => a.user).FirstOrDefault(a => a.AccountId == id);
         }
         public void AddTrans(Trans trans)
         {

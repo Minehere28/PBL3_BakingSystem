@@ -67,9 +67,9 @@
             </header>
 
             <section class="account-info">
-                <p><strong>Số tài khoản:</strong>0123456789</p>
-                <p><strong>Chủ tài khoản:</strong> Nguyễn Thị Sương Mai</p>
-                <p class="balance"><strong>Số dư:</strong> 12,500,000 VND</p>
+                <p><strong>Số tài khoản:</strong>@ViewBag.AccountId</p>
+                <p><strong>Chủ tài khoản:</strong> @ViewBag.OwnerName</p>
+                <p class="balance"><strong>Số dư:</strong> @String.Format("{0:N0} VND", ViewBag.Balance)</p>
             </section>
 
             <!-- Filter form -->

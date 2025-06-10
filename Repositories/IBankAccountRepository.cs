@@ -12,8 +12,6 @@ namespace PBL3.Repositories
         LoanAccount? GetLoanAccountByID(int id);
         SavingAccount? GetSavingsAccountByID(int id);
         BankAccount? GetByID(int id);
-        ////Sửa lại logic phương thức này
-        //public string? GetAccountType(string sdt, int accountID);
         void Update (BankAccount bankAccount);
         bool FreezeAccount(int accountID);
         bool UnlockAccount(int accountID);

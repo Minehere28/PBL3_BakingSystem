@@ -168,7 +168,6 @@ namespace PBL3.Controllers
                     _ => transactions
                 };
             }
-            System.Diagnostics.Debug.WriteLine("Số giao dịch sau lọc: " + transactions.Count);
             if (transactions.Count == 0)
             {
                 ViewBag.Message = "Không có giao dịch nào trong khoảng thời gian này hoặc theo điều kiện lọc.";
